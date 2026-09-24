@@ -1,0 +1,15 @@
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+*.brf
+*.lbl
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Exception: tracked so the PDFs can be rebuilt without running bibtex, and
+# because make_submission.py bundles main.bbl into the CGF source archive.
+!main.bbl
+!supplementary.bbl

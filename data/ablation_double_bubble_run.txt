@@ -1,0 +1,171 @@
+==============================================================================
+Double-bubble ablation: isolating the combinatorics
+==============================================================================
+
+A. Do the two corner-label arms agree on what to extract?
+   Five-site power diagrams. Equal counts mean the isolating arm
+   reproduces the baseline's combinatorics; area may still differ,
+   because the baseline clamps its Newton iterate to a dilated cell.
+
+   seed 0
+              exact arrangement  verts  14030  tris  27829  area  10.17460  closes  True
+      corner-label, closed form  verts  13894  tris  27593  area  11.71004  closes False
+     corner-label, no perturbation  verts  13894  tris  27593  area  11.71004  closes False
+           corner-label, Newton  verts  13894  tris  27593  area  11.62343  closes False
+
+   seed 1
+              exact arrangement  verts  14067  tris  28138  area  10.28775  closes  True
+      corner-label, closed form  verts  13876  tris  27872  area  15.54478  closes False
+     corner-label, no perturbation  verts  13876  tris  27872  area  15.54478  closes False
+           corner-label, Newton  verts  13876  tris  27872  area  15.12900  closes False
+
+   seed 2
+              exact arrangement  verts  11896  tris  23496  area  10.36271  closes  True
+      corner-label, closed form  verts  11816  tris  23339  area  11.43252  closes False
+     corner-label, no perturbation  verts  11816  tris  23339  area  11.43252  closes False
+           corner-label, Newton  verts  11816  tris  23339  area  11.39938  closes False
+
+   corner-label arms agree on counts: True
+
+B. The optimisation, once per arm (steps=300, lr=2e-2, res=32)
+
+--- exact arrangement -------------------------------------------
+  step    0  A/V^(2/3) 9.1256  r/d 0.686 0.547  imbalance 8.07e-01  V 0.5734
+  step   20  A/V^(2/3) 9.2205  r/d 0.736 0.734  imbalance 3.79e-02  V 0.5709
+  step   40  A/V^(2/3) 9.1556  r/d 0.895 0.900  imbalance 4.10e-02  V 0.5862
+  step   60  A/V^(2/3) 9.1488  r/d 0.973 0.967  imbalance 1.89e-02  V 0.5881
+  step   80  A/V^(2/3) 9.1481  r/d 0.997 0.999  imbalance 6.39e-03  V 0.5882
+  step  100  A/V^(2/3) 9.1481  r/d 1.005 1.005  imbalance 2.04e-03  V 0.5882
+  step  120  A/V^(2/3) 9.1481  r/d 1.007 1.007  imbalance 8.36e-04  V 0.5881
+  step  140  A/V^(2/3) 9.1481  r/d 1.007 1.007  imbalance 8.81e-05  V 0.5881
+  step  160  A/V^(2/3) 9.1481  r/d 1.007 1.007  imbalance 9.99e-05  V 0.5881
+  step  180  A/V^(2/3) 9.1481  r/d 1.007 1.007  imbalance 1.14e-05  V 0.5881
+  step  200  A/V^(2/3) 9.1481  r/d 1.007 1.006  imbalance 3.83e-07  V 0.5881
+  step  220  A/V^(2/3) 9.1481  r/d 1.006 1.006  imbalance 5.01e-06  V 0.5881
+  step  240  A/V^(2/3) 9.1481  r/d 1.006 1.006  imbalance 2.13e-06  V 0.5881
+  step  260  A/V^(2/3) 9.1481  r/d 1.006 1.006  imbalance 1.63e-06  V 0.5881
+  step  280  A/V^(2/3) 9.1481  r/d 1.006 1.006  imbalance 1.07e-06  V 0.5881
+  step  299  A/V^(2/3) 9.1481  r/d 1.006 1.006  imbalance 9.18e-07  V 0.5881
+
+--- corner-label, closed form -----------------------------------
+  step    0  A/V^(2/3) 9.3125  r/d 0.783 0.625  imbalance 8.11e-01  V 0.5778
+  step   20  A/V^(2/3) 23.0437  r/d 0.813 0.823  imbalance 1.80e-01  V 2.4103
+  step   40  A/V^(2/3) 9.2918  r/d 0.888 0.897  imbalance 3.48e-02  V 0.7996
+  step   60  A/V^(2/3) 9.3239  r/d 0.890 0.899  imbalance 3.89e-02  V 0.8177
+  step   80  A/V^(2/3) 9.2323  r/d 0.883 0.896  imbalance 5.54e-02  V 0.7945
+  step  100  A/V^(2/3) 9.2000  r/d 0.878 0.890  imbalance 5.34e-02  V 0.7758
+  step  120  A/V^(2/3) 9.2148  r/d 0.875 0.884  imbalance 4.03e-02  V 0.7638
+  step  140  A/V^(2/3) 9.2198  r/d 0.873 0.879  imbalance 2.70e-02  V 0.7538
+  step  160  A/V^(2/3) 9.2054  r/d 0.872 0.875  imbalance 1.22e-02  V 0.7449
+  step  180  A/V^(2/3) 9.2119  r/d 0.870 0.872  imbalance 1.06e-02  V 0.7380
+  step  200  A/V^(2/3) 9.2053  r/d 0.868 0.870  imbalance 9.27e-03  V 0.7326
+  step  220  A/V^(2/3) 9.2202  r/d 0.867 0.868  imbalance 7.04e-03  V 0.7294
+  step  240  A/V^(2/3) 9.2244  r/d 0.866 0.867  imbalance 5.06e-03  V 0.7279
+  step  260  A/V^(2/3) 9.2249  r/d 0.866 0.867  imbalance 4.72e-03  V 0.7264
+  step  280  A/V^(2/3) 9.2252  r/d 0.866 0.866  imbalance 4.32e-03  V 0.7257
+  step  299  A/V^(2/3) 9.2252  r/d 0.866 0.866  imbalance 3.94e-03  V 0.7254
+
+--- corner-label, no perturbation -------------------------------
+  step    0  A/V^(2/3) 9.3125  r/d 0.783 0.625  imbalance 8.11e-01  V 0.5778
+  step   20  A/V^(2/3) 9.2557  r/d 0.807 0.805  imbalance 3.85e-02  V 0.6147
+  step   40  A/V^(2/3) 9.2550  r/d 0.731 0.778  imbalance 1.78e-01  V 0.6063
+  step   60  A/V^(2/3) 9.3722  r/d 0.694 0.681  imbalance 7.06e-02  V 0.5770
+  step   80  A/V^(2/3) 9.3045  r/d 0.793 0.782  imbalance 3.57e-02  V 0.6643
+  step  100  A/V^(2/3) 9.2700  r/d 0.837 0.835  imbalance 5.81e-04  V 0.6182
+  step  120  A/V^(2/3) 9.2730  r/d 0.883 0.881  imbalance 7.71e-03  V 0.6048
+  step  140  A/V^(2/3) 9.2371  r/d 0.912 0.913  imbalance 1.02e-03  V 0.6003
+  step  160  A/V^(2/3) 9.2110  r/d 0.928 0.926  imbalance 5.32e-03  V 0.5949
+  step  180  A/V^(2/3) 9.2062  r/d 0.936 0.936  imbalance 1.71e-04  V 0.5942
+  step  200  A/V^(2/3) 9.2004  r/d 0.940 0.939  imbalance 6.37e-04  V 0.5941
+  step  220  A/V^(2/3) 9.2046  r/d 0.940 0.940  imbalance 3.83e-04  V 0.5947
+  step  240  A/V^(2/3) 9.2014  r/d 0.941 0.941  imbalance 3.10e-04  V 0.5944
+  step  260  A/V^(2/3) 9.1996  r/d 0.942 0.942  imbalance 2.69e-04  V 0.5945
+  step  280  A/V^(2/3) 9.1986  r/d 0.942 0.942  imbalance 2.23e-04  V 0.5946
+  step  299  A/V^(2/3) 9.1981  r/d 0.942 0.942  imbalance 1.84e-04  V 0.5946
+
+--- corner-label, Newton ----------------------------------------
+  step    0  A/V^(2/3) 9.3403  r/d 0.783 0.625  imbalance 8.09e-01  V 0.5823
+  step   20  A/V^(2/3) 9.2776  r/d 1.141 1.134  imbalance 1.48e-02  V 0.5927
+  step   40  A/V^(2/3) 9.2829  r/d 1.348 1.345  imbalance 1.08e-02  V 0.5993
+  step   60  A/V^(2/3) 9.2582  r/d 1.274 1.276  imbalance 5.93e-03  V 0.5894
+  step   80  A/V^(2/3) 9.3585  r/d 1.272 1.274  imbalance 1.84e-02  V 0.6034
+  step  100  A/V^(2/3) 9.2566  r/d 1.405 1.395  imbalance 2.71e-02  V 0.5867
+  step  120  A/V^(2/3) 9.2833  r/d 1.422 1.431  imbalance 2.89e-02  V 0.5980
+  step  140  A/V^(2/3) 9.3007  r/d 1.417 1.416  imbalance 1.38e-02  V 0.5938
+  step  160  A/V^(2/3) 9.2243  r/d 1.378 1.380  imbalance 1.48e-02  V 0.5918
+  step  180  A/V^(2/3) 9.2414  r/d 1.389 1.387  imbalance 1.45e-03  V 0.5911
+  step  200  A/V^(2/3) 9.2000  r/d 1.267 1.266  imbalance 4.19e-03  V 0.5875
+  step  220  A/V^(2/3) 9.1889  r/d 1.276 1.277  imbalance 4.33e-04  V 0.5929
+  step  240  A/V^(2/3) 9.1888  r/d 1.277 1.277  imbalance 1.73e-04  V 0.5927
+  step  260  A/V^(2/3) 9.1887  r/d 1.276 1.276  imbalance 1.50e-04  V 0.5925
+  step  280  A/V^(2/3) 9.1886  r/d 1.276 1.276  imbalance 8.13e-05  V 0.5925
+  step  299  A/V^(2/3) 9.1886  r/d 1.276 1.276  imbalance 8.36e-05  V 0.5925
+
+==============================================================================
+Optimal ratio for the double bubble: 9.139422
+                       arm   A/V^2/3    excess             r/d          angles     rough  closes
+         exact arrangement    9.1481    0.0086  1.0064  1.0064   119.8   120.3  3.50e-10    True
+ corner-label, closed form    9.2253    0.0858  0.8657  0.8661   109.1   125.5  2.52e-06   False
+corner-label, no perturbation    9.1981    0.0587  0.9423  0.9422   115.6   122.2  3.91e-06   False
+      corner-label, Newton    9.1886    0.0492  1.2759  1.2759   113.1   133.9  1.03e-04   False
+
+                             arm  rough(ratio)   rough(loss)  rough/step
+               exact arrangement      3.50e-10      3.88e-10       0.022
+       corner-label, closed form      2.52e-06      5.50e-05       0.061
+   corner-label, no perturbation      3.91e-06      4.32e-06       0.023
+            corner-label, Newton      1.03e-04      2.98e-04       1.437
+
+Excess objective over the exact arrangement:
+  combinatorics alone (closed form) +0.0772   r/d 0.8657
+  combinatorics and solver (Newton) +0.0406   r/d 1.2759
+
+  Sufficiency:  changing the combinatorics alone is enough to lose the
+                double bubble, with nothing else touched.
+  Contingency:  the two arms straddle the truth (0.87 and 1.28 against 1),
+                so which wrong shape you get is not set by the
+                combinatorics on its own.
+
+Roughness relative to the exact arrangement:  closed form 7197x,  Newton 293227x
+  Read the scale-free column above instead where the ratio matters: the exact
+  arm's trace is flat because it converged and stopped, so ratios against it
+  measure that as much as they measure smoothness.
+
+The perturbation, priced on its own (both arms corner-label, closed form):
+  with    perturbation  r/d 0.8657   A/V^2/3 9.2253   rough/step 0.061
+  without perturbation  r/d 0.9423   A/V^2/3 9.1981   rough/step 0.023
+
+C. Is the wrong answer a basin or a point? Five initialisations.
+   'A broad wrong basin' is a claim about initialisation, so varying
+   the grid cannot settle it. Varying the start can.
+                  exact arrangement            paper  r/d  1.0064  A/V^2/3   9.1481  closes  True
+                  exact arrangement   near-symmetric  r/d  1.0082  A/V^2/3   9.1481  closes  True
+                  exact arrangement    very lopsided  r/d  0.4592  A/V^2/3   9.6832  closes  True
+                  exact arrangement            tight  r/d  1.0077  A/V^2/3   9.1481  closes  True
+                  exact arrangement            loose  r/d  1.0091  A/V^2/3   9.1481  closes  True
+
+          corner-label, closed form            paper  r/d  0.8657  A/V^2/3   9.2253  closes False
+          corner-label, closed form   near-symmetric  r/d  0.8824  A/V^2/3   9.2616  closes False
+          corner-label, closed form    very lopsided  r/d  0.8790  A/V^2/3   9.2276  closes False
+          corner-label, closed form            tight  r/d  0.7967  A/V^2/3   9.2059  closes False
+          corner-label, closed form            loose  r/d  1.0644  A/V^2/3   9.1672  closes False
+
+      corner-label, no perturbation            paper  r/d  0.9423  A/V^2/3   9.1981  closes False
+      corner-label, no perturbation   near-symmetric  r/d  0.7033  A/V^2/3   9.5230  closes False
+      corner-label, no perturbation    very lopsided  r/d  0.9422  A/V^2/3   9.1996  closes False
+      corner-label, no perturbation            tight  r/d  0.8611  A/V^2/3   9.1948  closes False
+      corner-label, no perturbation            loose  r/d  0.9679  A/V^2/3   9.1921  closes False
+
+               corner-label, Newton            paper  r/d  1.2759  A/V^2/3   9.1886  closes False
+               corner-label, Newton   near-symmetric  r/d  2.8705  A/V^2/3   9.4174  closes False
+               corner-label, Newton    very lopsided  r/d  0.9044  A/V^2/3   9.1734  closes False
+               corner-label, Newton            tight  r/d  0.9844  A/V^2/3   9.1920  closes False
+               corner-label, Newton            loose  r/d  1.0548  A/V^2/3   9.1731  closes False
+
+                             arm   n   r/d min   r/d max    spread  worst |r/d - 1|
+               exact arrangement   5    0.4592    1.0091    0.5499           0.5408
+       corner-label, closed form   5    0.7967    1.0644    0.2677           0.2033
+   corner-label, no perturbation   5    0.7033    0.9679    0.2646           0.2967
+            corner-label, Newton   5    0.9044    2.8705    1.9661           1.8705
+==============================================================================
+
+written to D:\projects\paper4\data\ablation_double_bubble.json

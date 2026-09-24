@@ -1,0 +1,368 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{\uppercase{BWHSH25}}
+
+\bibitem[BBPT12]{bayer2012}
+\textsc{Bayer J.~D., Blake R.~C., Plank G., Trayanova N.~A.}:
+\newblock A novel rule-based algorithm for assigning myocardial fiber
+  orientation to computational heart models.
+\newblock \emph{Annals of Biomedical Engineering 40}, 10 (2012), 2243--2254.
+\newblock \href {https://doi.org/10.1007/s10439-012-0593-5}
+  {\path{doi:10.1007/s10439-012-0593-5}}.
+
+\bibitem[BF95]{bloomenthal1995}
+\textsc{Bloomenthal J., Ferguson K.}:
+\newblock Polygonization of non-manifold implicit surfaces.
+\newblock In \emph{Proceedings of SIGGRAPH '95} (1995), pp.~309--316.
+\newblock \href {https://doi.org/10.1145/218380.218462}
+  {\path{doi:10.1145/218380.218462}}.
+
+\bibitem[BWHSH25]{tetweave2025}
+\textsc{Binninger A., Wiersma R., Herholz P., Sorkine-Hornung O.}:
+\newblock {TetWeave}: Isosurface extraction using on-the-fly {D}elaunay
+  tetrahedral grids for gradient-based mesh optimization.
+\newblock \emph{ACM Transactions on Graphics 44}, 4 (2025).
+\newblock \href {https://doi.org/10.1145/3730851} {\path{doi:10.1145/3730851}}.
+
+\bibitem[BYB09]{boltcheva2009}
+\textsc{Boltcheva D., Yvinec M., Boissonnat J.-D.}:
+\newblock Feature preserving {D}elaunay mesh generation from 3d multi-material
+  images.
+\newblock \emph{Computer Graphics Forum 28}, 5 (2009), 1455--1464.
+\newblock \href {https://doi.org/10.1111/j.1467-8659.2009.01522.x}
+  {\path{doi:10.1111/j.1467-8659.2009.01522.x}}.
+
+\bibitem[CDP{\etalchar{*}}26]{svmultiphysics}
+\textsc{Codoni D., Dave S., Parker D.~W., Brown A.~L., Jilberto J., Zhao H.,
+  Adil D., Sexton Z.~A., Pfaller M.~R., Bucelli M., Shadden S.~C., Taylor
+  C.~A., Marsden A.~L.}:
+\newblock {svMultiPhysics}: A finite element-based solver for cardiovascular
+  simulations, 2026.
+\newblock Fiber generation utilities at
+  \url{https://github.com/SimVascular/svMultiPhysics}.
+\newblock \href {http://arxiv.org/abs/2607.19631} {\path{arXiv:2607.19631}}.
+
+\bibitem[CGA24]{cgal2024}
+Tetrahedral mesh generation improvements.
+\newblock {CGAL} release notes, Dec. 2024.
+\newblock URL: \url{https://www.cgal.org/2024/12/01/mesh3-improvements/}.
+
+\bibitem[CHW{\etalchar{*}}25]{mind2025}
+\textsc{Chen X., Hou F., Wang W., Qin H., He Y.}:
+\newblock {MIND}: Material interface generation from {UDF}s for non-manifold
+  surface reconstruction.
+\newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS)}
+  (2025).
+\newblock \href {http://arxiv.org/abs/2506.02938} {\path{arXiv:2506.02938}}.
+
+\bibitem[dGWH{\etalchar{*}}15]{degoes2015}
+\textsc{de~Goes F., Wallez C., Huang J., Pavlov D., Desbrun M.}:
+\newblock Power particles: An incompressible fluid solver based on power
+  diagrams.
+\newblock \emph{ACM Transactions on Graphics 34}, 4 (2015), 1--11.
+\newblock \href {https://doi.org/10.1145/2766901} {\path{doi:10.1145/2766901}}.
+
+\bibitem[DK91]{doi1991}
+\textsc{Doi A., Koide A.}:
+\newblock An efficient method of triangulating equi-valued surfaces by using
+  tetrahedral cells.
+\newblock \emph{IEICE Transactions on Information and Systems E74-D}, 1 (1991),
+  214--224.
+
+\bibitem[DS08]{dyadechko2008}
+\textsc{Dyadechko V., Shashkov M.}:
+\newblock Reconstruction of multi-material interfaces from moment data.
+\newblock \emph{Journal of Computational Physics 227}, 11 (2008), 5361--5384.
+\newblock \href {https://doi.org/10.1016/j.jcp.2007.12.029}
+  {\path{doi:10.1016/j.jcp.2007.12.029}}.
+
+\bibitem[DSIB{\etalchar{*}}19]{doste2019}
+\textsc{Doste R., Soto-Iglesias D., Bernardino G., Alcaine A., Sebastian R.,
+  Giffard-Roisin S., Sermesant M., Berruezo A., Sanchez-Quintana D., Camara
+  O.}:
+\newblock A rule-based method to model myocardial fiber orientation in cardiac
+  biventricular geometries with outflow tracts.
+\newblock \emph{International Journal for Numerical Methods in Biomedical
+  Engineering 35}, 4 (2019), e3185.
+\newblock \href {https://doi.org/10.1002/cnm.3185}
+  {\path{doi:10.1002/cnm.3185}}.
+
+\bibitem[DSSL25]{nife2024}
+\textsc{Daviet G., Shen T., Sharp N., Levin D. I.~W.}:
+\newblock Neurally integrated finite elements for differentiable elasticity on
+  evolving domains.
+\newblock \emph{ACM Transactions on Graphics 44}, 2 (2025), 1--17.
+\newblock \href {https://doi.org/10.1145/3727874} {\path{doi:10.1145/3727874}}.
+
+\bibitem[DZCJ22]{du2022}
+\textsc{Du X., Zhou Q., Carr N., Ju T.}:
+\newblock Robust computation of implicit surface networks for piecewise linear
+  functions.
+\newblock \emph{ACM Transactions on Graphics 41}, 4 (2022), 1--16.
+\newblock \href {https://doi.org/10.1145/3528223.3530176}
+  {\path{doi:10.1145/3528223.3530176}}.
+
+\bibitem[EM90]{edelsbrunner1990}
+\textsc{Edelsbrunner H., M{\"u}cke E.~P.}:
+\newblock Simulation of simplicity: A technique to cope with degenerate cases
+  in geometric algorithms.
+\newblock \emph{ACM Transactions on Graphics 9}, 1 (1990), 66--104.
+\newblock \href {https://doi.org/10.1145/77635.77639}
+  {\path{doi:10.1145/77635.77639}}.
+
+\bibitem[Fre42]{freudenthal1942}
+\textsc{Freudenthal H.}:
+\newblock Simplizialzerlegungen von beschr{\"a}nkter flachheit.
+\newblock \emph{Annals of Mathematics 43}, 3 (1942), 580--583.
+\newblock \href {https://doi.org/10.2307/1968813} {\path{doi:10.2307/1968813}}.
+
+\bibitem[Fri22]{frisken2022}
+\textsc{Frisken S.~F.}:
+\newblock Surfacenets for multi-label segmentations with preservation of sharp
+  boundaries.
+\newblock \emph{Journal of Computer Graphics Techniques 11}, 1 (2022), 34--54.
+\newblock URL: \url{https://jcgt.org/published/0011/01/03/}.
+
+\bibitem[FWM{\etalchar{*}}25]{fromm2025}
+\textsc{Fromm J.~E., Wunsch N., Maute K., Evans J.~A., Chen J.-S.}:
+\newblock Interpolation-based immersogeometric analysis methods for
+  multi-material and multi-physics problems.
+\newblock \emph{Computational Mechanics 75}, 1 (2025), 301--325.
+\newblock \href {https://doi.org/10.1007/s00466-024-02506-z}
+  {\path{doi:10.1007/s00466-024-02506-z}}.
+
+\bibitem[GSF22]{guillard2022}
+\textsc{Guillard B., Stella F., Fua P.}:
+\newblock {MeshUDF}: Fast and differentiable meshing of unsigned distance field
+  networks.
+\newblock In \emph{European Conference on Computer Vision (ECCV)} (2022).
+\newblock \href {https://doi.org/10.1007/978-3-031-20062-5_33}
+  {\path{doi:10.1007/978-3-031-20062-5_33}}.
+
+\bibitem[Her51]{herring1951}
+\textsc{Herring C.}:
+\newblock Surface tension as a motivation for sintering.
+\newblock In \emph{The Physics of Powder Metallurgy}, Kingston W.~E., (Ed.).
+  McGraw-Hill, 1951, pp.~143--179.
+
+\bibitem[HSSZ97]{hege1997}
+\textsc{Hege H.-C., Seeba{\ss} M., Stalling D., Z{\"o}ckler M.}:
+\newblock \emph{A Generalized Marching Cubes Algorithm Based on Non-Binary
+  Classifications}.
+\newblock Tech. Rep. SC 97-05, Konrad-Zuse-Zentrum f{\"u}r Informationstechnik
+  Berlin, Dec. 1997.
+
+\bibitem[JAYB26]{cgalmesh3}
+\textsc{Jamin C., Alliez P., Yvinec M., Boissonnat J.-D.}:
+\newblock 3d mesh generation.
+\newblock In \emph{{CGAL} User and Reference Manual}, 6.2.1~ed. {CGAL}
+  Editorial Board, 2026.
+\newblock URL: \url{https://doc.cgal.org/latest/Mesh_3/}.
+
+\bibitem[JDZ{\etalchar{*}}24]{ju2024}
+\textsc{Ju Y., Du X., Zhou Q., Carr N., Ju T.}:
+\newblock Adaptive grid generation for discretizing implicit complexes.
+\newblock \emph{ACM Transactions on Graphics 43}, 4 (2024), 1--17.
+\newblock \href {https://doi.org/10.1145/3658215} {\path{doi:10.1145/3658215}}.
+
+\bibitem[JLSW02]{ju2002}
+\textsc{Ju T., Losasso F., Schaefer S., Warren J.}:
+\newblock Dual contouring of hermite data.
+\newblock In \emph{Proceedings of SIGGRAPH 2002} (2002), pp.~339--346.
+\newblock \href {https://doi.org/10.1145/566570.566586}
+  {\path{doi:10.1145/566570.566586}}.
+
+\bibitem[KGSS10]{kucharik2010}
+\textsc{Kucharik M., Garimella R.~V., Schofield S.~P., Shashkov M.~J.}:
+\newblock A comparative study of interface reconstruction methods for
+  multi-material {ALE} simulations.
+\newblock \emph{Journal of Computational Physics 229}, 7 (2010), 2432--2452.
+\newblock \href {https://doi.org/10.1016/j.jcp.2009.07.009}
+  {\path{doi:10.1016/j.jcp.2009.07.009}}.
+
+\bibitem[Kuh60]{kuhn1960}
+\textsc{Kuhn H.~W.}:
+\newblock Some combinatorial lemmas in topology.
+\newblock \emph{IBM Journal of Research and Development 4}, 5 (1960), 518--524.
+\newblock \href {https://doi.org/10.1147/rd.45.0518}
+  {\path{doi:10.1147/rd.45.0518}}.
+
+\bibitem[LC87]{lorensen1987}
+\textsc{Lorensen W.~E., Cline H.~E.}:
+\newblock Marching cubes: A high resolution 3d surface construction algorithm.
+\newblock In \emph{Proceedings of SIGGRAPH '87} (1987), pp.~163--169.
+\newblock \href {https://doi.org/10.1145/37401.37422}
+  {\path{doi:10.1145/37401.37422}}.
+
+\bibitem[LDG18]{liao2018}
+\textsc{Liao Y., Donn{\'e} S., Geiger A.}:
+\newblock Deep marching cubes: Learning explicit surface representations.
+\newblock In \emph{IEEE Conference on Computer Vision and Pattern Recognition
+  (CVPR)} (2018), pp.~2916--2925.
+\newblock \href {https://doi.org/10.1109/CVPR.2018.00308}
+  {\path{doi:10.1109/CVPR.2018.00308}}.
+
+\bibitem[LYP{\etalchar{*}}24]{contactfield2024}
+\textsc{Lee H., You T., Park H., Shim W., Kim S., Lim H.}:
+\newblock {ContactField}: Implicit field representation for multi-person
+  interaction geometry.
+\newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS)}
+  (2024), pp.~38079--38104.
+\newblock \href {https://doi.org/10.52202/079017-1203}
+  {\path{doi:10.52202/079017-1203}}.
+
+\bibitem[MON{\etalchar{*}}19]{mescheder2019}
+\textsc{Mescheder L., Oechsle M., Niemeyer M., Nowozin S., Geiger A.}:
+\newblock Occupancy networks: Learning 3d reconstruction in function space.
+\newblock In \emph{IEEE Conference on Computer Vision and Pattern Recognition
+  (CVPR)} (2019), pp.~4455--4465.
+\newblock \href {https://doi.org/10.1109/CVPR.2019.00459}
+  {\path{doi:10.1109/CVPR.2019.00459}}.
+
+\bibitem[NF97]{nielson1997}
+\textsc{Nielson G.~M., Franke R.}:
+\newblock Computing the separating surface for segmented data.
+\newblock In \emph{Proceedings of IEEE Visualization '97} (1997), pp.~229--233.
+\newblock \href {https://doi.org/10.1109/VISUAL.1997.663887}
+  {\path{doi:10.1109/VISUAL.1997.663887}}.
+
+\bibitem[NH91]{nielson1991}
+\textsc{Nielson G.~M., Hamann B.}:
+\newblock The asymptotic decider: Resolving the ambiguity in marching cubes.
+\newblock In \emph{Proceedings of IEEE Visualization '91} (1991), pp.~83--91.
+\newblock \href {https://doi.org/10.1109/VISUAL.1991.175782}
+  {\path{doi:10.1109/VISUAL.1991.175782}}.
+
+\bibitem[NLCT24]{numerow2024}
+\textsc{Numerow L., Li Y., Coros S., Thomaszewski B.}:
+\newblock Differentiable {V}oronoi diagrams for simulation of cell-based
+  mechanical systems.
+\newblock \emph{ACM Transactions on Graphics 43}, 4 (2024), 1--11.
+\newblock \href {https://doi.org/10.1145/3658152} {\path{doi:10.1145/3658152}}.
+
+\bibitem[PFS{\etalchar{*}}19]{park2019}
+\textsc{Park J.~J., Florence P., Straub J., Newcombe R., Lovegrove S.}:
+\newblock {DeepSDF}: Learning continuous signed distance functions for shape
+  representation.
+\newblock In \emph{IEEE Conference on Computer Vision and Pattern Recognition
+  (CVPR)} (2019), pp.~165--174.
+\newblock \href {https://doi.org/10.1109/CVPR.2019.00025}
+  {\path{doi:10.1109/CVPR.2019.00025}}.
+
+\bibitem[RLR{\etalchar{*}}20]{remelli2020}
+\textsc{Remelli E., Lukoianov A., Richter S.~R., Guillard B., Bagautdinov T.,
+  Baque P., Fua P.}:
+\newblock {MeshSDF}: Differentiable iso-surface extraction.
+\newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS)}
+  (2020).
+
+\bibitem[RSCA23]{mmdc2023}
+\textsc{Rashid T., Sultana S., Chakravarty M., Audette M.~A.}:
+\newblock Atlas-based shared-boundary deformable multi-surface models through
+  multi-material and two-manifold dual contouring.
+\newblock \emph{Information 14}, 4 (2023), 220.
+\newblock \href {https://doi.org/10.3390/info14040220}
+  {\path{doi:10.3390/info14040220}}.
+
+\bibitem[SGFL08]{schofield2008}
+\textsc{Schofield S.~P., Garimella R.~V., Francois M.~M., Loub{\`e}re R.}:
+\newblock Material order-independent interface reconstruction using power
+  diagrams.
+\newblock \emph{International Journal for Numerical Methods in Fluids 56}, 6
+  (2008), 643--659.
+\newblock \href {https://doi.org/10.1002/fld.1544}
+  {\path{doi:10.1002/fld.1544}}.
+
+\bibitem[SGFL09]{schofield2009}
+\textsc{Schofield S.~P., Garimella R.~V., Francois M.~M., Loub{\`e}re R.}:
+\newblock A second-order accurate material-order-independent interface
+  reconstruction technique for multi-material flow simulations.
+\newblock \emph{Journal of Computational Physics 228}, 3 (2009), 731--745.
+\newblock \href {https://doi.org/10.1016/j.jcp.2008.09.023}
+  {\path{doi:10.1016/j.jcp.2008.09.023}}.
+
+\bibitem[SGY{\etalchar{*}}21]{shen2021}
+\textsc{Shen T., Gao J., Yin K., Liu M.-Y., Fidler S.}:
+\newblock Deep marching tetrahedra: A hybrid representation for high-resolution
+  3d shape synthesis.
+\newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS)}
+  (2021).
+
+\bibitem[SMH{\etalchar{*}}23]{shen2023}
+\textsc{Shen T., Munkberg J., Hasselgren J., Yin K., Wang Z., Chen W., Gojcic
+  Z., Fidler S., Sharp N., Gao J.}:
+\newblock Flexible isosurface extraction for gradient-based mesh optimization.
+\newblock \emph{ACM Transactions on Graphics 42}, 4 (2023), 1--16.
+\newblock \href {https://doi.org/10.1145/3592430} {\path{doi:10.1145/3592430}}.
+
+\bibitem[SML06]{vtk}
+\textsc{Schroeder W., Martin K., Lorensen B.}:
+\newblock \emph{The Visualization Toolkit: An Object-Oriented Approach to 3D
+  Graphics}, 4th~ed.
+\newblock Kitware, 2006.
+\newblock The \texttt{vtkSurfaceNets3D} filter used here is from VTK 9.7.
+
+\bibitem[SMSB{\etalchar{*}}26]{s2mdf2026}
+\textsc{Sayin~Mercadier D., Stella F., Bizeau A., Talabot N., Fua P.}:
+\newblock {S2MDF}: A plug-and-play layer for intersection-free multi-object
+  signed distance fields, 2026.
+\newblock \href {http://arxiv.org/abs/2605.29761} {\path{arXiv:2605.29761}}.
+
+\bibitem[SS11]{saye2011}
+\textsc{Saye R.~I., Sethian J.~A.}:
+\newblock The {V}oronoi implicit interface method for computing multiphase
+  physics.
+\newblock \emph{Proceedings of the National Academy of Sciences 108}, 49
+  (2011), 19498--19503.
+\newblock \href {https://doi.org/10.1073/pnas.1111557108}
+  {\path{doi:10.1073/pnas.1111557108}}.
+
+\bibitem[SS12]{saye2012}
+\textsc{Saye R.~I., Sethian J.~A.}:
+\newblock Analysis and applications of the {V}oronoi implicit interface method.
+\newblock \emph{Journal of Computational Physics 231}, 18 (2012), 6051--6085.
+\newblock \href {https://doi.org/10.1016/j.jcp.2012.04.004}
+  {\path{doi:10.1016/j.jcp.2012.04.004}}.
+
+\bibitem[SZSH98]{stalling1998}
+\textsc{Stalling D., Z{\"o}ckler M., Sander O., Hege H.-C.}:
+\newblock \emph{Weighted Labels for 3D Image Segmentation}.
+\newblock Tech. Rep. SC 98-39, Konrad-Zuse-Zentrum f{\"u}r Informationstechnik
+  Berlin, 1998.
+
+\bibitem[Tay76]{taylor1976}
+\textsc{Taylor J.~E.}:
+\newblock The structure of singularities in soap-bubble-like and soap-film-like
+  minimal surfaces.
+\newblock \emph{Annals of Mathematics 103}, 3 (1976), 489--539.
+\newblock \href {https://doi.org/10.2307/1970949} {\path{doi:10.2307/1970949}}.
+
+\bibitem[VMR26]{vira2026}
+\textsc{Vira J., Myers A., Ratcliffe S.}:
+\newblock Multi-class boundary extraction from implicit representations, 2026.
+\newblock \href {http://arxiv.org/abs/2602.16217} {\path{arXiv:2602.16217}}.
+
+\bibitem[WBM{\etalchar{*}}23]{wasserthal2023}
+\textsc{Wasserthal J., Breit H.-C., Meyer M.~T., Pradella M., Hinck D., Sauter
+  A.~W., Heye T., Boll D.~T., Cyriac J., Yang S., Bach M., Segeroth M.}:
+\newblock Totalsegmentator: Robust segmentation of 104 anatomic structures in
+  ct images.
+\newblock \emph{Radiology: Artificial Intelligence 5}, 5 (2023), e230024.
+\newblock \href {https://doi.org/10.1148/ryai.230024}
+  {\path{doi:10.1148/ryai.230024}}.
+
+\bibitem[WLC{\etalchar{*}}22]{objectsdf2022}
+\textsc{Wu Q., Liu X., Chen Y., Li K., Zheng C., Cai J., Zheng J.}:
+\newblock Object-compositional neural implicit surfaces.
+\newblock In \emph{European Conference on Computer Vision (ECCV)} (2022),
+  pp.~197--213.
+\newblock \href {https://doi.org/10.1007/978-3-031-19812-0_12}
+  {\path{doi:10.1007/978-3-031-19812-0_12}}.
+
+\bibitem[WS03]{wu2003}
+\textsc{Wu Z., Sullivan J.~M.}:
+\newblock Multiple material marching cubes algorithm.
+\newblock \emph{International Journal for Numerical Methods in Engineering 58},
+  2 (2003), 189--207.
+\newblock \href {https://doi.org/10.1002/nme.775} {\path{doi:10.1002/nme.775}}.
+
+\end{thebibliography}

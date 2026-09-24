@@ -1,0 +1,175 @@
+==============================================================================
+FlexiCubes comparison. device=cuda
+==============================================================================
+
+==============================================================================
+A. Extraction accuracy at K=2, fixed field, matched grids
+==============================================================================
+   Error is distance to the analytic surface in grid cells, scored two
+   ways: over points sampled uniformly by area, and over the extracted
+   vertices. The sampled figure is the comparable one. Our vertices are
+   by construction zeros of the interpolant along tet edges, whereas a
+   dual vertex is an average of its cell's crossings and is not meant to
+   lie on the surface at all, so the vertex figure flatters us.
+   FlexiCubes runs float32 with default weights; ours runs float64.
+
+   sphere, exact area 4.830513
+    res       method     tris    area err   max d/h   rms d/h  max vert  rms vert
+     16         ours     2592   1.052e-02    0.0697    0.0362    0.0606    0.0213
+     16   flexicubes      828   2.733e-02    0.1207    0.0813    0.0697    0.0513
+     32         ours    10968   2.622e-03    0.0361    0.0181    0.0337    0.0101
+     32   flexicubes     3660   6.225e-03    0.0604    0.0399    0.0346    0.0246
+     48         ours    24912   1.161e-03    0.0249    0.0121    0.0247    0.0070
+     48   flexicubes     8364   2.774e-03    0.0432    0.0265    0.0249    0.0162
+     64         ours    44304   6.543e-04    0.0186    0.0091    0.0187    0.0053
+     64   flexicubes    14748   1.565e-03    0.0317    0.0199    0.0185    0.0123
+
+   torus, exact area 5.495396
+    res       method     tris    area err   max d/h   rms d/h  max vert  rms vert
+     16         ours     2864   1.256e-02    0.1733    0.0584    0.1697    0.0382
+     16   flexicubes      928   4.423e-02    0.2648    0.1249    0.1227    0.0736
+     32         ours    12112   3.108e-03    0.0905    0.0273    0.0929    0.0185
+     32   flexicubes     3856   1.021e-02    0.1101    0.0565    0.0644    0.0348
+     48         ours    27816   1.379e-03    0.0573    0.0179    0.0599    0.0121
+     48   flexicubes     8912   4.488e-03    0.0752    0.0365    0.0430    0.0227
+     64         ours    49928   7.758e-04    0.0436    0.0134    0.0451    0.0090
+     64   flexicubes    16064   2.464e-03    0.0569    0.0271    0.0344    0.0169
+
+==============================================================================
+B. Optimisation at K=2 towards the ellipsoid: one parameter tensor, two extractors
+==============================================================================
+   Grid 32^3 initialised to a sphere. Symmetric Chamfer on
+   area-weighted samples; error is distance to the analytic target.
+     ours               lr 5e-03   reg 0e+00   settled 1.908e-03  rms d/h 0.4995
+     ours               lr 1e-02   reg 0e+00   settled 1.825e-03  rms d/h 0.4569
+     ours               lr 5e-03   reg 1e-02   settled 1.461e-03  rms d/h 0.3762
+     ours               lr 1e-02   reg 1e-02   settled 1.564e-03  rms d/h 0.3884
+     ours               lr 5e-03   reg 1e-01   settled 1.183e-03  rms d/h 0.3409
+     ours               lr 1e-02   reg 1e-01   settled 9.415e-04  rms d/h 0.2208
+     ours               lr 5e-03   reg 1e+00   settled 4.012e-03  rms d/h 1.0008
+     ours               lr 1e-02   reg 1e+00   settled 8.337e-03  rms d/h 1.4458
+     ours               lr 5e-03   reg 1e+01   settled 3.040e-03  rms d/h 0.7762
+     ours               lr 1e-02   reg 1e+01   settled 5.284e-03  rms d/h 1.1331
+     flexicubes         lr 5e-03   reg 0e+00   settled 8.833e-04  rms d/h 0.0453
+     flexicubes         lr 1e-02   reg 0e+00   settled 8.891e-04  rms d/h 0.0458
+     flexicubes         lr 5e-03   reg 1e-02   settled 8.863e-04  rms d/h 0.0447
+     flexicubes         lr 1e-02   reg 1e-02   settled 8.875e-04  rms d/h 0.0430
+     flexicubes         lr 5e-03   reg 1e-01   settled 8.833e-04  rms d/h 0.0423
+     flexicubes         lr 1e-02   reg 1e-01   settled 8.883e-04  rms d/h 0.0457
+     flexicubes         lr 5e-03   reg 1e+00   settled 1.283e-03  rms d/h 0.5086
+     flexicubes         lr 1e-02   reg 1e+00   settled 3.208e-03  rms d/h 0.7446
+     flexicubes         lr 5e-03   reg 1e+01   settled 8.879e-04  rms d/h 0.0426
+     flexicubes         lr 1e-02   reg 1e+01   settled 9.269e-04  rms d/h 0.2167
+     flexicubes+weights lr 5e-03   reg 0e+00   settled 9.090e-04  rms d/h 0.0722
+     flexicubes+weights lr 1e-02   reg 0e+00   settled 8.982e-04  rms d/h 0.0615
+     flexicubes+weights lr 5e-03   reg 1e-02   settled 9.044e-04  rms d/h 0.0724
+     flexicubes+weights lr 1e-02   reg 1e-02   settled 8.925e-04  rms d/h 0.0605
+     flexicubes+weights lr 5e-03   reg 1e-01   settled 9.047e-04  rms d/h 0.0619
+     flexicubes+weights lr 1e-02   reg 1e-01   settled 8.899e-04  rms d/h 0.0559
+     flexicubes+weights lr 5e-03   reg 1e+00   settled 8.913e-04  rms d/h 0.0512
+     flexicubes+weights lr 1e-02   reg 1e+00   settled 8.879e-04  rms d/h 0.0485
+     flexicubes+weights lr 5e-03   reg 1e+01   settled 9.061e-04  rms d/h 0.0653
+     flexicubes+weights lr 1e-02   reg 1e+01   settled 8.924e-04  rms d/h 0.0571
+
+   effect of the field smoothness penalty, at each method's best rate:
+     ours               reg 0e+00   rms d/h 0.4569
+     ours               reg 1e-02   rms d/h 0.3884
+     ours               reg 1e-01   rms d/h 0.2208
+     ours               reg 1e+00   rms d/h 1.4458
+     ours               reg 1e+01   rms d/h 1.1331
+     flexicubes         reg 0e+00   rms d/h 0.0453
+     flexicubes         reg 1e-02   rms d/h 0.0447
+     flexicubes         reg 1e-01   rms d/h 0.0423
+     flexicubes         reg 1e+00   rms d/h 0.5086
+     flexicubes         reg 1e+01   rms d/h 0.0426
+     flexicubes+weights reg 0e+00   rms d/h 0.0615
+     flexicubes+weights reg 1e-02   rms d/h 0.0605
+     flexicubes+weights reg 1e-01   rms d/h 0.0559
+     flexicubes+weights reg 1e+00   rms d/h 0.0485
+     flexicubes+weights reg 1e+01   rms d/h 0.0571
+
+                 method       lr      reg   rms d/h   max d/h     tris    chamfer  closes
+                   ours    1e-02    1e-01    0.2208    3.5697     8592  9.415e-04    True
+             flexicubes    5e-03    0e+00    0.0453    0.4582     2856  8.833e-04       -
+     flexicubes+weights    1e-02    1e+00    0.0485    0.2204     2696  8.879e-04       -
+
+==============================================================================
+B. Optimisation at K=2 towards the torus: one parameter tensor, two extractors
+==============================================================================
+   Grid 32^3 initialised to a sphere. Symmetric Chamfer on
+   area-weighted samples; error is distance to the analytic target.
+     ours               lr 5e-03   reg 1e-02   settled 2.849e-02  rms d/h 2.5845
+     ours               lr 1e-02   reg 1e-02   settled 3.108e-02  rms d/h 2.7128
+     ours               lr 5e-03   reg 1e-01   settled 2.784e-02  rms d/h 2.5636
+     ours               lr 1e-02   reg 1e-01   settled 2.779e-02  rms d/h 2.5126
+     ours               lr 5e-03   reg 1e+00   settled 2.238e-02  rms d/h 2.2988
+     ours               lr 1e-02   reg 1e+00   settled 1.973e-02  rms d/h 2.1493
+     flexicubes         lr 5e-03   reg 1e-02   settled 2.433e-02  rms d/h 2.3647
+     flexicubes         lr 1e-02   reg 1e-02   settled 2.104e-02  rms d/h 2.1490
+     flexicubes         lr 5e-03   reg 1e-01   settled 1.780e-02  rms d/h 2.0185
+     flexicubes         lr 1e-02   reg 1e-01   settled 2.274e-02  rms d/h 2.3719
+     flexicubes         lr 5e-03   reg 1e+00   settled 1.586e-02  rms d/h 1.8485
+     flexicubes         lr 1e-02   reg 1e+00   settled 1.651e-02  rms d/h 1.8978
+     flexicubes+weights lr 5e-03   reg 1e-02   settled 2.529e-02  rms d/h 2.4052
+     flexicubes+weights lr 1e-02   reg 1e-02   settled 2.211e-02  rms d/h 2.2615
+     flexicubes+weights lr 5e-03   reg 1e-01   settled 1.478e-02  rms d/h 1.7747
+     flexicubes+weights lr 1e-02   reg 1e-01   settled 2.602e-02  rms d/h 2.4675
+     flexicubes+weights lr 5e-03   reg 1e+00   settled 1.399e-02  rms d/h 1.7541
+     flexicubes+weights lr 1e-02   reg 1e+00   settled 1.974e-02  rms d/h 2.1428
+
+   effect of the field smoothness penalty, at each method's best rate:
+     ours               reg 1e-02   rms d/h 2.7128
+     ours               reg 1e-01   rms d/h 2.5126
+     ours               reg 1e+00   rms d/h 2.1493
+     flexicubes         reg 1e-02   rms d/h 2.3647
+     flexicubes         reg 1e-01   rms d/h 2.0185
+     flexicubes         reg 1e+00   rms d/h 1.8485
+     flexicubes+weights reg 1e-02   rms d/h 2.4052
+     flexicubes+weights reg 1e-01   rms d/h 1.7747
+     flexicubes+weights reg 1e+00   rms d/h 1.7541
+
+                 method       lr      reg   rms d/h   max d/h     tris    chamfer  closes
+                   ours    1e-02    1e+00    2.1493    9.2840    19672  1.973e-02    True
+             flexicubes    5e-03    1e+00    1.8485    8.8590     6360  1.586e-02       -
+     flexicubes+weights    5e-03    1e+00    1.7541    8.3461     5420  1.399e-02       -
+
+==============================================================================
+C. A triple junction, at K=3
+==============================================================================
+   Standard double bubble: two unit-radius spheres a radius apart,
+   three regions meeting along a circle. FlexiCubes takes one scalar
+   field, so each region is extracted one-vs-rest and the results
+   are asked whether they form a partition.
+
+   Overlap is the fraction of the domain two regions both claim,
+   which is zero for anything that is a partition. Swept over
+   resolution, because a defect that refines away is a different
+   complaint from one that does not.
+
+    res       method     tris    overlap        gap   mislabel
+     16               ours     4074    0.0000%    0.5050%    0.5050%
+     16  ours, one-vs-rest     4260    0.0000%    0.6725%    0.6725%
+     16         flexicubes     1256    0.8975%    2.9125%    3.8950%
+
+     24               ours     8898    0.0000%    0.2125%    0.2125%
+     24  ours, one-vs-rest     9376    0.0000%    0.2850%    0.2850%
+     24         flexicubes     2776    1.1775%    2.2300%    3.4375%
+
+     32               ours    15610    0.0000%    0.1400%    0.1400%
+     32  ours, one-vs-rest    16912    0.0000%    0.1900%    0.1900%
+     32         flexicubes     4920    1.2675%    2.0275%    3.3150%
+
+     48               ours    34902    0.0000%    0.0625%    0.0625%
+     48  ours, one-vs-rest    38316    0.0000%    0.0750%    0.0750%
+     48         flexicubes    11288    1.4075%    1.8725%    3.2900%
+
+   Ours, as one complex, overlaps by 0.0000% at worst over every
+   resolution: the complex is one partition, so there is nothing to
+   disagree with.
+   Ours, run one-vs-rest, overlaps by 0.0000% to 0.0000%, and
+   FlexiCubes one-vs-rest by 0.8975% to 1.4075%.
+   The control decides what the FlexiCubes row means: whatever our own
+   extractor also loses when run one-vs-rest is the decomposition's
+   doing and not theirs.
+
+written to D:\projects\paper4\data\flexicubes_comparison.json

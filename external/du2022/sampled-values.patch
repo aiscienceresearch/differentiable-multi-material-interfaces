@@ -1,0 +1,40 @@
+diff --git a/src/load_functions.cpp b/src/load_functions.cpp
+index 2b7f67c..42a045a 100644
+--- a/src/load_functions.cpp
++++ b/src/load_functions.cpp
+@@ -315,6 +315,35 @@ bool load_functions(const std::string &filename,
+                 funcVals(i, j) = 0;
+             }
+         }
++        else if (type == "sampled")
++        {
++            // Values given directly at each vertex, in tet mesh order, for
++            // fields with no analytic form. Nothing downstream of this loader
++            // sees the difference: every other branch also just fills a column
++            // of funcVals, and the arrangement is computed from that column.
++            auto pos = filename.find_last_of("/\\");
++            auto path_name = filename.substr(0, pos + 1);
++            auto value_file = path_name + data[j]["file"].get<std::string>();
++            std::ifstream vin(value_file.c_str());
++            if (!vin)
++            {
++                std::cout << "sampled value file not exist: " << value_file << std::endl;
++                return false;
++            }
++            json values;
++            vin >> values;
++            vin.close();
++            if (static_cast<Eigen::Index>(values.size()) != n_pts)
++            {
++                std::cout << "sampled values: got " << values.size() << " for "
++                          << n_pts << " vertices" << std::endl;
++                return false;
++            }
++            for (int i = 0; i < n_pts; i++)
++            {
++                funcVals(i, j) = values[i].get<double>();
++            }
++        }
+         else if (type == "rbf") {
+             auto pos = filename.find_last_of("/\\");
+             auto path_name = filename.substr(0, pos + 1);

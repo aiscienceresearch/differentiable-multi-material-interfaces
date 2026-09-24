@@ -1,0 +1,24 @@
+\begin{thebibliography}{\uppercase{DZCJ22}}
+
+\bibitem[Aur87]{aurenhammer1987}
+\textsc{Aurenhammer F.}:
+\newblock Power diagrams: Properties, algorithms and applications.
+\newblock \emph{SIAM Journal on Computing 16}, 1 (1987), 78--96.
+\newblock \href {https://doi.org/10.1137/0216006} {\path{doi:10.1137/0216006}}.
+
+\bibitem[DZCJ22]{du2022}
+\textsc{Du X., Zhou Q., Carr N., Ju T.}:
+\newblock Robust computation of implicit surface networks for piecewise linear
+  functions.
+\newblock \emph{ACM Transactions on Graphics 41}, 4 (2022), 1--16.
+\newblock \href {https://doi.org/10.1145/3528223.3530176}
+  {\path{doi:10.1145/3528223.3530176}}.
+
+\bibitem[SML06]{vtk}
+\textsc{Schroeder W., Martin K., Lorensen B.}:
+\newblock \emph{The Visualization Toolkit: An Object-Oriented Approach to 3D
+  Graphics}, 4th~ed.
+\newblock Kitware, 2006.
+\newblock The \texttt{vtkSurfaceNets3D} filter used here is from VTK 9.7.
+
+\end{thebibliography}

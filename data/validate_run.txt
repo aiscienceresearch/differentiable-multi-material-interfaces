@@ -1,0 +1,43 @@
+==============================================================================
+Differentiable multi-label boundary extraction - validation
+==============================================================================
+
+A. Topological invariants (degree 2 interior / 1 boundary / 3 junction)
+  [PASS] power diagram (5 sites) @ res 32  res=32 V=177 S=176 junctions=3
+  [PASS] power diagram (5 sites) @ res 64  res=64 V=351 S=350 junctions=3
+  [PASS] sector fan (K=3) @ res 32  res=32 V=117 S=116 junctions=1
+  [PASS] sector fan (K=3) @ res 64  res=64 V=231 S=230 junctions=1
+  [PASS] sector fan (K=6) @ res 32  res=32 V=224 S=223 junctions=4
+  [PASS] sector fan (K=6) @ res 64  res=64 V=452 S=451 junctions=4
+  [PASS] annuli (K=4) @ res 32  res=32 V=390 S=390 junctions=0
+  [PASS] annuli (K=4) @ res 64  res=64 V=786 S=786 junctions=0
+  [PASS] neural field (K=3) @ res 32  res=32 V=115 S=114 junctions=0
+  [PASS] neural field (K=3) @ res 64  res=64 V=235 S=234 junctions=0
+  [PASS] neural field (K=5) @ res 32  res=32 V=293 S=293 junctions=12
+  [PASS] neural field (K=5) @ res 64  res=64 V=576 S=576 junctions=12
+
+B. Triple-junction position vs closed-form circumcentre
+  [PASS] res 32  found 3/3 junctions, max error 8.356e-17
+  [PASS] res 64  found 3/3 junctions, max error 1.186e-16
+  [PASS] res 128  found 3/3 junctions, max error 6.530e-17
+
+C. Interface accuracy on curved interfaces (annuli, exact circles)
+  [PASS] interface vertices lie on the exact circle  max radial error 2.220e-16 over res [32, 64, 128, 256]
+  [PASS] polyline midpoint error converges at ~2nd order  rms h/32:3.31e-04, h/64:8.68e-05, h/128:2.55e-05, h/256:5.74e-06 | fitted rate 1.93 (pairwise 1.93, 1.77, 2.15)
+
+D. Autograd vs central finite differences on the extracted vertices
+  [PASS] power diagram, d/d(sites, weights)  res=48 probes=15 worst rel err 1.488e-09
+  [PASS] annuli, d/d(radii)  res=48 probes=4 worst rel err 3.883e-10
+  [PASS] sector fan, d/d(centre)  res=48 probes=2 worst rel err 1.281e-10
+  [PASS] neural field, d/d(all MLP weights)  res=40 probes=31 worst rel err 9.690e-08
+
+E. Junction Jacobian vs derivative of the closed-form circumcentre
+  [PASS] junction Jacobian matches closed form  3 junctions, worst rel err 2.909e-16 (junction separating sites [0, 2, 3])
+
+F. Junction angle measurement vs known geometry
+  [PASS] sector fan angles are 120 deg  worst deviation 2.842e-14 deg over 3 configurations
+  [PASS] Voronoi vertex angles match Delaunay complement  3 junctions, worst deviation 2.842e-14 deg
+
+==============================================================================
+24/24 checks passed
+==============================================================================

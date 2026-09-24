@@ -1,0 +1,36 @@
+__pycache__/
+*.pyc
+
+# Downloaded imaging and model output: reproducible with tools/fetch_realdata.ps1,
+# and far too large to track. The extracted results JSON is kept.
+data/*.nii.gz
+data/*.npz
+data/*.pkl
+data/*.pt
+data/seg_liver/
+
+# Exported geometry: regenerable with src/export_mesh.py, tens of megabytes.
+export/**/*.obj
+export/**/*.mtl
+
+# The CGF source archive, its compiled proof and the staging directory they
+# are built in, all rebuilt by paper/make_submission.py.
+submission-cgf/
+submission-cgf.zip
+submission-cgf.pdf
+
+# The compiled manuscript and supplement. Rebuilt from the .tex, which is
+# tracked, so nothing is lost; kept out because this repository is public
+# while the paper is under review, and a typeset PDF in it would amount to
+# posting a preprint.
+paper/main.pdf
+paper/supplementary.pdf
+
+# Upstream Eurographics style archive; the files the paper needs are copied
+# into paper/ and tracked there.
+cgf/
+
+# Upstream FlexiCubes checkout, fetched by external/flexicubes/fetch.ps1 at a
+# pinned commit. Apache 2.0, so it could be vendored, but fetching keeps the
+# provenance obvious.
+external/flexicubes/FlexiCubes/

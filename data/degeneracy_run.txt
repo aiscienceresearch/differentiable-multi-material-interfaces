@@ -1,0 +1,32 @@
+============================================================================================================
+Cost of symbolic perturbation as a configuration approaches degeneracy
+============================================================================================================
+resolution 24, five sites on a sphere of radius 0.6
+t is the radial offset of one site; at t=0 five cells meet at a point.
+sep is the true distance between the two merging quadruple points.
+err/delta tests whether the perturbation costs its own magnitude.
+
+        t        sep   n |           delta=0e+00 |           delta=1e-12 |           delta=1e-10 |           delta=1e-08
+                         |        err  err/del |        err  err/del |        err  err/del |        err  err/del
+  1.0e-01   9.35e-02   2 |   1.12e-16      nan |   1.62e-12     1.62 |   1.62e-10     1.62 |   1.62e-08     1.62
+  1.0e-02   9.82e-03   2 |   1.59e-17      nan |   1.48e-12     1.48 |   1.48e-10     1.48 |   1.48e-08     1.48
+  1.0e-03   9.87e-04   2 |   2.25e-17      nan |   1.37e-12     1.37 |   1.37e-10     1.37 |   1.37e-08     1.37
+  1.0e-04   9.88e-05   2 |   1.59e-17      nan |   1.37e-12     1.37 |   1.37e-10     1.37 |   1.37e-08     1.37
+  1.0e-05   9.88e-06   2 |   1.59e-17      nan |   1.37e-12     1.37 |   1.37e-10     1.37 |   1.37e-08     1.37
+  1.0e-06   9.88e-07   2 |   1.99e-17      nan |   1.37e-12     1.37 |   1.37e-10     1.37 |   1.37e-08     1.37
+  1.0e-07   9.88e-08   2 |   2.03e-17      nan |   1.37e-12     1.37 |   1.37e-10     1.37 |   1.37e-08     1.37
+  1.0e-08   9.88e-09   2 |   1.59e-17      nan |   1.37e-12     1.37 |   1.37e-10     1.37 |   1.31e-08     1.31
+  1.0e-09   9.88e-10   2 |   1.59e-17      nan |   1.37e-12     1.37 |   1.37e-10     1.37 |   7.42e-09     0.74
+  1.0e-10   9.88e-11   2 |   1.59e-17      nan |   1.37e-12     1.37 |   1.31e-10     1.31 |   6.97e-09     0.70
+  1.0e-11   7.26e-12   3 |   7.26e-12      nan |   6.20e-12     6.20 |   7.42e-11     0.74 |   6.92e-09     0.69   <- reference at its own limit
+
+------------------------------------------------------------------------------------------------------------
+Over t = 1e-01 down to 1e-10, true vertex separation shrinking to 9.9e-11:
+  delta=1e-12   err/delta in [1.37, 1.62]
+  delta=1e-10   err/delta in [1.31, 1.62]
+  delta=1e-08   err/delta in [0.70, 1.62]
+  unperturbed   worst error 1.12e-16
+
+The error tracks delta rather than delta/t, so merging vertices do not
+amplify it. One family is not a correctness proof for all configurations,
+which is what exact predicates provide and this does not.

@@ -1,0 +1,87 @@
+==============================================================================
+Differentiable multi-label surface extraction in 3D - validation
+==============================================================================
+
+A. Vertices satisfy their defining equal-logit equations
+   Recomputed from the interpolant, independently of the solve.
+  [PASS] power diagram (K=5)  2499 vertices, max spread among tied logits 4.441e-16
+  [PASS] sector fan (K=4)  2106 vertices, max spread among tied logits 2.220e-16
+  [PASS] spherical shells (K=4)  3402 vertices, max spread among tied logits 6.939e-17
+  [PASS] neural field (K=4)  4339 vertices, max spread among tied logits 1.110e-16
+  [PASS] neural field (K=6)  5211 vertices, max spread among tied logits 1.388e-16
+
+B. Closure and orientability of the extracted complex
+   Every triangle side is used twice with opposite winding, except on triple curves
+   (used once by each of three patches) and at the domain boundary.
+  [PASS] power diagram (K=5) @ res 12  3647 triangles, 5825 sides, unpaired 0, non-orientable 0, thin patches 0
+  [PASS] power diagram (K=5) @ res 20  9614 triangles, 15002 sides, unpaired 0, non-orientable 0, thin patches 0
+  [PASS] sector fan (K=4) @ res 12  3009 triangles, 4761 sides, unpaired 0, non-orientable 0, thin patches 0
+  [PASS] sector fan (K=4) @ res 20  8036 triangles, 12463 sides, unpaired 0, non-orientable 0, thin patches 0
+  [PASS] spherical shells (K=4) @ res 12  5112 triangles, 7668 sides, unpaired 0, non-orientable 0, thin patches 0
+  [PASS] spherical shells (K=4) @ res 20  14068 triangles, 21102 sides, unpaired 0, non-orientable 0, thin patches 0
+  [PASS] neural field (K=4) @ res 12  5872 triangles, 9245 sides, unpaired 0, non-orientable 0, thin patches 0
+  [PASS] neural field (K=4) @ res 20  16343 triangles, 25296 sides, unpaired 0, non-orientable 0, thin patches 0
+  [PASS] neural field (K=6) @ res 12  7186 triangles, 11284 sides, unpaired 0, non-orientable 0, thin patches 0
+  [PASS] neural field (K=6) @ res 20  20660 triangles, 31880 sides, unpaired 0, non-orientable 0, thin patches 0
+
+C. Features per cell that a one-per-cell case analysis cannot represent
+   power diagram (K=5)      edges with 2+ crossings    46, faces with 2+ triple points    3
+   sector fan (K=4)         edges with 2+ crossings    21, faces with 2+ triple points    0
+   spherical shells (K=4)   edges with 2+ crossings     0, faces with 2+ triple points    0
+   neural field (K=4)       edges with 2+ crossings    67, faces with 2+ triple points    5
+   neural field (K=6)       edges with 2+ crossings    71, faces with 2+ triple points    0
+  [PASS] multi-feature cells are found and represented  205 multi-crossing edges, 8 multi-triple-point faces across all fields
+
+D. Curved interfaces (spherical shells, exact radii)
+  [PASS] sphere area converges at ~2nd order  res 16: 4.56e-02, res 24: 2.01e-02, res 32: 1.12e-02, res 48: 5.00e-03 | fitted rate 2.01
+
+E. Autograd vs central finite differences on the extracted vertices
+  [PASS] power diagram, d/d(sites, weights)  res=12 probes=20 (skipped 0) worst rel err 1.182e-08
+  [PASS] spherical shells, d/d(radii)  res=12 probes=4 (skipped 0) worst rel err 1.929e-08
+  [PASS] sector fan, d/d(centre)  res=12 probes=3 (skipped 0) worst rel err 1.235e-10
+  [PASS] neural field, d/d(all MLP weights)  res=10 probes=79 (skipped 2) worst rel err 7.575e-06
+
+F. Dihedral angles where three patches meet
+  [PASS] sector-fan triple curves meet at 120 deg  155 segments, worst deviation 1.421e-14 deg
+
+G. Accuracy vs an exactly known power-diagram cell
+   Every interface here is planar and every triple curve straight, so a correct
+   extractor is exact at any resolution.
+   exact cell 0: volume 0.438029035026, area 3.101575816905, 14 facets, 24 corners
+   corner-label case analysis
+     res   8  volume err 1.694e-01  area err 1.697e-01
+     res  16  volume err 2.043e-01  area err 2.051e-01
+     res  32  volume err 8.734e-02  area err 8.477e-02
+     res  48  volume err 7.263e-02  area err 7.161e-02
+   exact arrangement
+     res   8  volume err 1.267e-16  area err 1.432e-16
+     res  16  volume err 0.000e+00  area err 1.432e-16
+     res  32  volume err 2.535e-16  area err 1.432e-16
+     res  48  volume err 0.000e+00  area err 1.432e-16
+   exact arrangement, perturbed by 1e-09
+     res   8  volume err 5.381e-10  area err 5.695e-10
+     res  16  volume err 7.401e-10  area err 4.970e-10
+     res  32  volume err 2.416e-10  area err 2.631e-10
+     res  48  volume err 2.325e-10  area err 2.928e-10
+   corner-label convergence rate 0.47; the arrangement needs none
+  [PASS] arrangement extractor is exact on a power diagram  worst volume/area error 2.535e-16 over res 8-48
+  [PASS] the symbolic perturbation costs only its own magnitude  worst volume/area error 7.401e-10, 1x the perturbation
+
+H. How often the corner-label case analysis is wrong
+   res  16  three-label faces with no interior triple point  102/ 205 =  49.8%  |  edges needing 2+ crossings  1.42%
+   res  32  three-label faces with no interior triple point  169/ 402 =  42.0%  |  edges needing 2+ crossings  0.64%
+   res  48  three-label faces with no interior triple point  288/ 608 =  47.4%  |  edges needing 2+ crossings  0.47%
+  [PASS] the corner-label failure rate does not shrink under refinement  50% -> 47% from res 16 to 48, so refinement alone cannot fix it
+
+I. Entity keys survive grids past the packing ceiling
+  [PASS] both entity-key paths find the same shared faces  2808 faces on a 6^3 grid, True vs False for the packed key
+  [PASS] the packing ceiling is detected, not assumed  2^21 nodes is the last cube that fits in int64
+
+J. Closure and orientability on randomly sampled fields
+   Forty fields drawn without inspection: eight seeds each of the neural field at
+   K=4,6 and of random power diagrams at K=4,6,9.
+  [PASS] closure and orientation hold on all 40 unseen fields  40 fields, 0 unpaired sides, 0 inconsistently oriented
+
+==============================================================================
+28/28 checks passed
+==============================================================================

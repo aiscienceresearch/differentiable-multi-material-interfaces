@@ -1,0 +1,108 @@
+==============================================================================
+Our extractor vs the reference implementation of Du et al., same tetrahedra
+==============================================================================
+
+their 18-sphere example  (K=18, 10648 nodes, 55566 tets, via analytic)
+  quantity                theirs      ours   agree
+  vertices                 12201     12201   yes
+  polygons                 17885     17885   yes
+  patches                     70        70   yes
+  labels                      18        18   yes
+  interface pairs             70        70   yes
+  vertex sets coincide to 3.331e-16
+  their arrangement 59.8 ms  |  ours 225 ms (Python)
+  => AGREE
+
+8 spheres  (K=8, 15625 nodes, 82944 tets, via analytic)
+  quantity                theirs      ours   agree
+  vertices                  8581      8581   yes
+  polygons                 12629     12629   yes
+  patches                     16        16   yes
+  labels                       7         7   yes
+  interface pairs             16        16   yes
+  vertex sets coincide to 3.141e-16
+  their arrangement 32.6 ms  |  ours 148 ms (Python)
+  => AGREE
+
+5 planes  (K=5, 15625 nodes, 82944 tets, via analytic)
+  quantity                theirs      ours   agree
+  vertices                  5798      5798   yes
+  polygons                  8435      8435   yes
+  patches                      9         9   yes
+  labels                       5         5   yes
+  interface pairs              9         9   yes
+  vertex sets coincide to 3.189e-16
+  their arrangement 28.4 ms  |  ours 141 ms (Python)
+  => AGREE
+
+12 planes  (K=12, 9261 nodes, 48000 tets, via analytic)
+  quantity                theirs      ours   agree
+  vertices                  6775      6775   yes
+  polygons                  9892      9892   yes
+  patches                     27        27   yes
+  labels                      10        10   yes
+  interface pairs             27        27   yes
+  vertex sets coincide to 3.511e-16
+  their arrangement 22.9 ms  |  ours 102 ms (Python)
+  => AGREE
+
+analytic vs sampled (control)  (K=5, 15625 nodes, 82944 tets, via node values)
+  quantity                theirs      ours   agree
+  vertices                  5798      5798   yes
+  polygons                  8435      8435   yes
+  patches                      9         9   yes
+  labels                       5         5   yes
+  interface pairs              9         9   yes
+  vertex sets coincide to 3.189e-16
+  their arrangement 15.6 ms  |  ours 133 ms (Python)
+  => AGREE
+
+neural field, K=6  (K=6, 15625 nodes, 82944 tets, via node values)
+  quantity                theirs      ours   agree
+  vertices                 15051     15051   yes
+  polygons                 21916     21916   yes
+  patches                     10        10   yes
+  labels                       4         4   yes
+  interface pairs              5         5   yes
+  vertex sets coincide to 3.682e-16
+  their arrangement 74.1 ms  |  ours 162 ms (Python)
+  => AGREE
+
+power diagram, K=5  (K=5, 15625 nodes, 82944 tets, via node values)
+  quantity                theirs      ours   agree
+  vertices                  6953      6953   yes
+  polygons                 10382     10382   yes
+  patches                      9         9   yes
+  labels                       5         5   yes
+  interface pairs              9         9   yes
+  vertex sets coincide to 4.611e-16
+  their arrangement 19.8 ms  |  ours 138 ms (Python)
+  => AGREE
+
+clinical liver segmentation  (K=9, 117649 nodes, 663552 tets, via node values)
+  10 nodes carry an exact argmax tie; reporting both the field as given
+  and a generic version of it
+  as given:
+    quantity                theirs      ours   agree
+    vertices                 34707     34644   NO
+    polygons                 51565     51522   NO
+    patches                     16        16   yes
+    labels                       6         6   yes
+    interface pairs             11        11   yes
+    vertex sets coincide to 9.858e-01
+    their arrangement 178.2 ms  |  ours 1244 ms (Python)
+    => differs, as a degenerate input permits
+  made generic:
+    quantity                theirs      ours   agree
+    vertices                 34762     34762   yes
+    polygons                 51617     51617   yes
+    patches                     16        16   yes
+    labels                       6         6   yes
+    interface pairs             11        11   yes
+    vertex sets coincide to 1.066e-14
+    their arrangement 161.7 ms  |  ours 1199 ms (Python)
+    => AGREE
+
+==============================================================================
+8/8 cases agree
+==============================================================================

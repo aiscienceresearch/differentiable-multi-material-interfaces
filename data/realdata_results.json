@@ -1,0 +1,130 @@
+{
+  "volume": {
+    "origin_voxel": [
+      29,
+      118,
+      165
+    ],
+    "width": 49,
+    "spacing_mm": [
+      0.8047,
+      0.8047,
+      1.5
+    ],
+    "box_mm": [
+      -19.313,
+      19.313,
+      -19.313,
+      19.313,
+      -36.0,
+      36.0
+    ],
+    "labels_present": [
+      0,
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "grid": {
+    "resolution": 48,
+    "tetrahedra": 663552,
+    "node_voxel_alignment_error": 2.1094237467877974e-15,
+    "extract_seconds": 0.95
+  },
+  "ours": {
+    "vertices": 34764,
+    "triangles": 69211,
+    "vertex_kinds": {
+      "crossing": 33840,
+      "triple": 922,
+      "quadruple": 2
+    },
+    "patches": 11,
+    "patch_label_pairs": [
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        0,
+        8
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        4,
+        8
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        5,
+        8
+      ],
+      [
+        6,
+        7
+      ],
+      [
+        6,
+        8
+      ],
+      [
+        7,
+        8
+      ]
+    ],
+    "triple_segments": 920,
+    "max_overshoot": 0.0,
+    "max_residual": 0.0,
+    "interface_distance": {
+      "median_mm": 4.2407602870359743e-16,
+      "p90_mm": 1.329868190076553e-15,
+      "p99_mm": 2.248795532253606e-15,
+      "max_mm": 5.284295463291163e-10
+    },
+    "junction_vertex_divergence_mm": 0.0
+  },
+  "topology": {
+    "ok": true,
+    "unpaired_sides": 0,
+    "sides_used_more_than_twice": 0,
+    "inconsistently_oriented_sides": 0,
+    "missing_patches_on_triple_curves": 0,
+    "degenerate_triangles": 0,
+    "triangles_with_equal_labels": 0,
+    "num_triangles": 69211,
+    "num_sides": 105814,
+    "num_boundary_sides": 1253
+  },
+  "surfacenets": {
+    "points": 9950,
+    "quads": 9775,
+    "duplicated_groups": 6,
+    "duplicated_points": 18,
+    "max_divergence_mm": 1.065815413030151,
+    "mean_divergence_mm": 0.8741408911677349,
+    "voxel_mm": 0.8046879768371582,
+    "interface_distance": {
+      "median_mm": 0.11529235213959149,
+      "p90_mm": 0.3560819509530884,
+      "p99_mm": 0.9588541137121224,
+      "max_mm": 13.72293033874802
+    }
+  }
+}
