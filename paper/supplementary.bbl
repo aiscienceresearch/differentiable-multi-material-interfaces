@@ -1,0 +1,55 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{\uppercase{SMH{\etalchar{*}}23}}
+
+\bibitem[Aur87]{aurenhammer1987}
+\textsc{Aurenhammer F.}:
+\newblock Power diagrams: Properties, algorithms and applications.
+\newblock \emph{SIAM Journal on Computing 16}, 1 (1987), 78--96.
+\newblock \href {https://doi.org/10.1137/0216006} {\path{doi:10.1137/0216006}}.
+
+\bibitem[DZCJ22]{du2022}
+\textsc{Du X., Zhou Q., Carr N., Ju T.}:
+\newblock Robust computation of implicit surface networks for piecewise linear
+  functions.
+\newblock \emph{ACM Transactions on Graphics 41}, 4 (2022), 1--16.
+\newblock \href {https://doi.org/10.1145/3528223.3530176}
+  {\path{doi:10.1145/3528223.3530176}}.
+
+\bibitem[JKSH13]{jacobson2013}
+\textsc{Jacobson A., Kavan L., Sorkine-Hornung O.}:
+\newblock Robust inside-outside segmentation using generalized winding numbers.
+\newblock \emph{ACM Transactions on Graphics 32}, 4 (2013), 1--12.
+\newblock \href {https://doi.org/10.1145/2461912.2461916}
+  {\path{doi:10.1145/2461912.2461916}}.
+
+\bibitem[SMH{\etalchar{*}}23]{shen2023}
+\textsc{Shen T., Munkberg J., Hasselgren J., Yin K., Wang Z., Chen W., Gojcic
+  Z., Fidler S., Sharp N., Gao J.}:
+\newblock Flexible isosurface extraction for gradient-based mesh optimization.
+\newblock \emph{ACM Transactions on Graphics 42}, 4 (2023), 1--16.
+\newblock \href {https://doi.org/10.1145/3592430} {\path{doi:10.1145/3592430}}.
+
+\bibitem[SML06]{vtk}
+\textsc{Schroeder W., Martin K., Lorensen B.}:
+\newblock \emph{The Visualization Toolkit: An Object-Oriented Approach to 3D
+  Graphics}, 4th~ed.
+\newblock Kitware, 2006.
+\newblock The \texttt{vtkSurfaceNets3D} filter used here is from VTK 9.7.
+
+\bibitem[TSM{\etalchar{*}}20]{tancik2020}
+\textsc{Tancik M., Srinivasan P.~P., Mildenhall B., Fridovich-Keil S., Raghavan
+  N., Singhal U., Ramamoorthi R., Barron J.~T., Ng R.}:
+\newblock Fourier features let networks learn high frequency functions in low
+  dimensional domains.
+\newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS)}
+  (2020), vol.~33, pp.~7537--7547.
+
+\bibitem[XTS{\etalchar{*}}22]{xie2022}
+\textsc{Xie Y., Takikawa T., Saito S., Litany O., Yan S., Khan N., Tombari F.,
+  Tompkin J., Sitzmann V., Sridhar S.}:
+\newblock Neural fields in visual computing and beyond.
+\newblock \emph{Computer Graphics Forum 41}, 2 (2022), 641--676.
+\newblock \href {https://doi.org/10.1111/cgf.14505}
+  {\path{doi:10.1111/cgf.14505}}.
+
+\end{thebibliography}

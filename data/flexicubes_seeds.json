@@ -1,0 +1,143 @@
+{
+ "ours": [
+  {
+   "seed": 0,
+   "lr": 0.01,
+   "reg": 0.1,
+   "settled": 0.0011311751471296408,
+   "rms_dist_cells": 0.27443472313607525,
+   "max_dist_cells": 3.5879120452018363,
+   "triangles": 8784
+  },
+  {
+   "seed": 1,
+   "lr": 0.01,
+   "reg": 0.1,
+   "settled": 0.00625782939065955,
+   "rms_dist_cells": 1.8580845538761273,
+   "max_dist_cells": 10.610829180791923,
+   "triangles": 9894
+  },
+  {
+   "seed": 2,
+   "lr": 0.01,
+   "reg": 0.1,
+   "settled": 0.0028649877886072514,
+   "rms_dist_cells": 1.2155503218388686,
+   "max_dist_cells": 10.588030825754622,
+   "triangles": 9032
+  },
+  {
+   "seed": 3,
+   "lr": 0.01,
+   "reg": 0.1,
+   "settled": 0.001698176847108644,
+   "rms_dist_cells": 0.556924479599943,
+   "max_dist_cells": 4.062108370303518,
+   "triangles": 8972
+  },
+  {
+   "seed": 4,
+   "lr": 0.01,
+   "reg": 0.1,
+   "settled": 0.0012030538371354134,
+   "rms_dist_cells": 0.30744941799600745,
+   "max_dist_cells": 3.5878299832856984,
+   "triangles": 8784
+  }
+ ],
+ "flexicubes": [
+  {
+   "seed": 0,
+   "lr": 0.005,
+   "reg": 10.0,
+   "settled": 0.0008876766823743479,
+   "rms_dist_cells": 0.04222596353702611,
+   "max_dist_cells": 0.17322120290053503,
+   "triangles": 2744
+  },
+  {
+   "seed": 1,
+   "lr": 0.005,
+   "reg": 10.0,
+   "settled": 0.0008817345168477727,
+   "rms_dist_cells": 0.04545623769049149,
+   "max_dist_cells": 0.29408312516258855,
+   "triangles": 2758
+  },
+  {
+   "seed": 2,
+   "lr": 0.005,
+   "reg": 10.0,
+   "settled": 0.0008866220317907429,
+   "rms_dist_cells": 0.04150781784478059,
+   "max_dist_cells": 0.15005217167783183,
+   "triangles": 2752
+  },
+  {
+   "seed": 3,
+   "lr": 0.005,
+   "reg": 10.0,
+   "settled": 0.000881052000885848,
+   "rms_dist_cells": 0.04267737119815088,
+   "max_dist_cells": 0.14903255309977068,
+   "triangles": 2754
+  },
+  {
+   "seed": 4,
+   "lr": 0.005,
+   "reg": 10.0,
+   "settled": 0.0008834336863064153,
+   "rms_dist_cells": 0.0417844822143356,
+   "max_dist_cells": 0.15615762236799083,
+   "triangles": 2762
+  }
+ ],
+ "flexicubes+weights": [
+  {
+   "seed": 0,
+   "lr": 0.01,
+   "reg": 1.0,
+   "settled": 0.0008836862539532582,
+   "rms_dist_cells": 0.04720945659617346,
+   "max_dist_cells": 0.22505591742912037,
+   "triangles": 2696
+  },
+  {
+   "seed": 1,
+   "lr": 0.01,
+   "reg": 1.0,
+   "settled": 0.0008849957100770673,
+   "rms_dist_cells": 0.045789588023057964,
+   "max_dist_cells": 0.21148962880855068,
+   "triangles": 2716
+  },
+  {
+   "seed": 2,
+   "lr": 0.01,
+   "reg": 1.0,
+   "settled": 0.0008895744003964298,
+   "rms_dist_cells": 0.04657801822518479,
+   "max_dist_cells": 0.27779284007879745,
+   "triangles": 2704
+  },
+  {
+   "seed": 3,
+   "lr": 0.01,
+   "reg": 1.0,
+   "settled": 0.0008844660016663665,
+   "rms_dist_cells": 0.046041147824594786,
+   "max_dist_cells": 0.2082982820502521,
+   "triangles": 2720
+  },
+  {
+   "seed": 4,
+   "lr": 0.01,
+   "reg": 1.0,
+   "settled": 0.0008831366975368786,
+   "rms_dist_cells": 0.04585802264614961,
+   "max_dist_cells": 0.21137316842948536,
+   "triangles": 2710
+  }
+ ]
+}

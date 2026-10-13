@@ -1,0 +1,14 @@
+==============================================================================
+FlexiCubes comparison. device=cuda
+==============================================================================
+
+==============================================================================
+B''. Our arm on the ellipsoid, with and without its separate pieces
+==============================================================================
+     seed 0  rms d/h 0.2744  main piece only 0.1708  (3 separate pieces, 60 of 8784 triangles)
+     seed 1  rms d/h 1.8581  main piece only 0.7235  (4 separate pieces, 378 of 9894 triangles)
+     seed 2  rms d/h 1.2156  main piece only 0.5439  (4 separate pieces, 112 of 9032 triangles)
+     seed 3  rms d/h 0.5569  main piece only 0.3445  (2 separate pieces, 148 of 8972 triangles)
+     seed 4  rms d/h 0.3074  main piece only 0.3067  (1 separate pieces, 24 of 8784 triangles)
+
+written to D:\projects\paper4\data\flexicubes_pieces.json

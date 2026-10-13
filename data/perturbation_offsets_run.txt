@@ -1,0 +1,11 @@
+1. our vertices against the interface of the unperturbed interpolant
+   eps 0e+00: 34644 vertices, closed False (196 unpaired sides), patches with too few corners 198
+      distance median 4.22e-16 mm, max 6.04e-15 mm
+   eps 1e-09: 34764 vertices, closed True (0 unpaired sides), patches with too few corners 0
+      distance median 2.78e-10 mm, max 5.03e-09 mm
+2. reference vertices against ours, field as given
+   10 of 117649 nodes carry an exact argmax tie; smallest nonzero margin 2.2e-16
+   reference: 34707 vertices
+   eps 1e-11: ours 34764 vertices; every reference vertex within 1.7e-09 of one of ours
+   eps 1e-10: ours 34764 vertices; every reference vertex within 1.7e-08 of one of ours
+   eps 1e-09: ours 34764 vertices; every reference vertex within 1.7e-07 of one of ours

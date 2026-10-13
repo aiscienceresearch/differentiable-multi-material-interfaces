@@ -1,0 +1,29 @@
+==============================================================================
+FlexiCubes comparison. device=cuda
+==============================================================================
+
+==============================================================================
+B'. Arm B on the ellipsoid at each arm's selected setting, seeds 0 to 4
+==============================================================================
+     ours               lr 1e-02   reg 1e-01   seed 0  settled 1.131e-03  rms d/h 0.2744  max d/h 3.5879
+     ours               lr 1e-02   reg 1e-01   seed 1  settled 6.258e-03  rms d/h 1.8581  max d/h 10.6108
+     ours               lr 1e-02   reg 1e-01   seed 2  settled 2.865e-03  rms d/h 1.2156  max d/h 10.5880
+     ours               lr 1e-02   reg 1e-01   seed 3  settled 1.698e-03  rms d/h 0.5569  max d/h 4.0621
+     ours               lr 1e-02   reg 1e-01   seed 4  settled 1.203e-03  rms d/h 0.3074  max d/h 3.5878
+     flexicubes         lr 5e-03   reg 1e+01   seed 0  settled 8.877e-04  rms d/h 0.0422  max d/h 0.1732
+     flexicubes         lr 5e-03   reg 1e+01   seed 1  settled 8.817e-04  rms d/h 0.0455  max d/h 0.2941
+     flexicubes         lr 5e-03   reg 1e+01   seed 2  settled 8.866e-04  rms d/h 0.0415  max d/h 0.1501
+     flexicubes         lr 5e-03   reg 1e+01   seed 3  settled 8.811e-04  rms d/h 0.0427  max d/h 0.1490
+     flexicubes         lr 5e-03   reg 1e+01   seed 4  settled 8.834e-04  rms d/h 0.0418  max d/h 0.1562
+     flexicubes+weights lr 1e-02   reg 1e+00   seed 0  settled 8.837e-04  rms d/h 0.0472  max d/h 0.2251
+     flexicubes+weights lr 1e-02   reg 1e+00   seed 1  settled 8.850e-04  rms d/h 0.0458  max d/h 0.2115
+     flexicubes+weights lr 1e-02   reg 1e+00   seed 2  settled 8.896e-04  rms d/h 0.0466  max d/h 0.2778
+     flexicubes+weights lr 1e-02   reg 1e+00   seed 3  settled 8.845e-04  rms d/h 0.0460  max d/h 0.2083
+     flexicubes+weights lr 1e-02   reg 1e+00   seed 4  settled 8.831e-04  rms d/h 0.0459  max d/h 0.2114
+
+                 method   n   rms min   rms max   max min   max max  settled min  settled max
+                   ours   5    0.2744    1.8581    3.5878   10.6108    1.131e-03    6.258e-03
+             flexicubes   5    0.0415    0.0455    0.1490    0.2941    8.811e-04    8.877e-04
+     flexicubes+weights   5    0.0458    0.0472    0.2083    0.2778    8.831e-04    8.896e-04
+
+written to D:\projects\paper4\data\flexicubes_seeds.json

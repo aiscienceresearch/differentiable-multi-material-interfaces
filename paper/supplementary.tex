@@ -1,0 +1,1775 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.15in]{geometry}
+
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+
+% Propositions, equations and tables referred to here live in the paper; xr
+% resolves them against its .aux so the numbering agrees.
+\usepackage{xr}
+\externaldocument{main}
+
+\usepackage{amsmath,amssymb}
+% egpubl defines its own proof environment, which amsthm then refuses to
+% redefine; ceding it to amsthm keeps the Guarantees section's proofs working.
+\let\proof\relax
+\let\endproof\relax
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage[tableposition=top]{caption}
+\usepackage[section]{placeins}
+\usepackage{microtype}
+% eg-alpha-doi emits \href and \path in every entry that carries a DOI.
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\graphicspath{{../figures/}}
+
+% Every section, figure and table below is numbered "Sn" rather than "n", so
+% a reader (or reviewer) can never confuse a supplementary number with the
+% same number in the main paper. \ref{} picks this up automatically, so every
+% cross-reference in this file already reads "Sn" without further edits; the
+% references resolved via \externaldocument{main} are untouched, since those
+% objects physically live in the main paper and keep its numbering. The main
+% paper in turn reads this file's .aux (its own \externaldocument), so its
+% pointers into the supplement print the same Sn numbers.
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\theequation}{S\arabic{equation}}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{definition}
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\lab}{\ell}
+\newcommand{\labels}{\mathcal{K}}
+\newcommand{\tet}{\tau}
+\newcommand{\interp}{F}
+\newcommand{\region}[1]{R_{#1}}
+\newcommand{\dregion}[1]{\widehat{R}_{#1}}
+
+
+
+
+\title{\textbf{Supplementary material}\\[4pt]
+\large Exact Differentiable Extraction of Multi-Material Interfaces}
+\author{Melih Ozlem\\ AI Science Research\\ \texttt{aiscienceresearch.com}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent This supplement follows the order of the paper.
+Section~\ref{sec:fields-supp} defines the test fields, which most later
+sections use. Sections~\ref{sec:features-supp} to~\ref{sec:scaling-supp}
+expand the method of Section~\ref{sec:method},
+Section~\ref{sec:proofs-supp} proves the propositions of
+Section~\ref{sec:guarantees}, Sections~\ref{sec:degentest-supp}
+to~\ref{sec:flexicubes-supp} give the validation of
+Section~\ref{sec:experiments}, and Sections~\ref{sec:ablation-supp}
+to~\ref{sec:realdata-supp} the applications of Section~\ref{sec:demos}.
+Proposition, equation and citation numbers are those of the paper, and a
+section, figure or table number without an S refers to the paper. All results reported here
+are produced by the released code.
+
+\section{Test fields}
+\label{sec:fields-supp}
+
+Figure~\ref{fig:testfields} shows the five test fields of
+Section~\ref{sec:experiments}. A sixth field, defined after the five, is the
+enclosed cell of Table~\ref{tab:exact}. All six are defined on the box
+$[-1,1]^3$, and each is a PyTorch module, so its parameters can receive
+gradients from a loss on the extracted mesh. The $K$ regions of each field
+fill the box; there is no background label.
+
+\paragraph{Power diagram ($K=5$).} $f_k(x) = -\lVert x - c_k\rVert^2 + w_k$
+with all weights $w_k = 0$, so the partition is the Voronoi diagram of the
+sites $c_1 = (0.35, 0.20, 0.10)$, $c_2 = (-0.30, 0.25, -0.15)$,
+$c_3 = (0.05, -0.40, 0.22)$, $c_4 = (-0.15, -0.10, 0.45)$ and
+$c_5 = (0.10, 0.05, -0.48)$.
+
+\paragraph{Sector fan ($K=4$).} $f_k(x) = \langle x - c, d_k\rangle$ with
+center $c = (0.05, -0.02, 0.03)$ and $d_1,\dots,d_4$ the unit vectors from the
+center of a regular tetrahedron to its corners. Since
+$\langle x - c, d_k\rangle = \lVert x - c\rVert \cos\psi_k$, where $\psi_k$
+is the angle between $x - c$ and $d_k$, each point takes the label of the
+direction closest to it as seen from $c$, and each region is a cone with apex
+$c$. The six interfaces are flat
+wedges, which meet three at a time along four straight triple lines, and these
+meet at one quadruple point at $c$. Every dihedral angle is $120^\circ$. The fan is
+the Voronoi diagram of the four points $c + d_k$; unlike the five sites above,
+these are arranged symmetrically, so that every region meets every other at
+the single point $c$.
+
+\paragraph{Spherical shells ($K=4$).} $f_k(x) = -(\lVert x\rVert - r_k)^2$ with
+$r = (0.15, 0.45, 0.75, 1.05)$, so each point takes the label of the nearest
+radius and the interface between shells $k$ and $k+1$ is the sphere of radius
+$(r_k + r_{k+1})/2$, that is $0.30$, $0.60$ and $0.90$.
+
+\paragraph{Neural fields ($K=4$ and $K=6$).} A neural
+field~\cite{xie2022} is a network that
+takes a point ${x = (x_1, x_2, x_3)}$ in 3D and returns its $K$ logits, so it defines $f$ like the
+fields above, and the label at $x$ is the largest of its outputs. The point
+is first mapped to Fourier features~\cite{tancik2020}. Each coordinate $x_i$ contributes itself
+and $\sin(2^j x_i)$ and $\cos(2^j x_i)$ for $j = 0,\dots,3$, nine numbers per
+coordinate and $27$ for the point. These are fixed functions of $x$ and add
+no information, but they set the scale on which the field can vary, down to
+the period $2\pi/8 \approx 0.79$ of $\sin(8 x_i)$ in a box of width $2$; on
+the raw coordinates alone, an untrained network of this size gives nearly flat
+interfaces, similar to those of a power diagram. The features feed a
+multilayer perceptron with three hidden
+layers of width $64$ ($K=4$) or $48$ ($K=6$), $\tanh$ activations and a
+linear output of $K$ logits. The weights are drawn once from PyTorch's default
+initialization, with seeds $0$ and $2$, and then held fixed; the networks are
+not trained. At this initialization the logits sit at constant offsets larger
+than their variation over the box, so that one or two labels would fill
+almost all of it. The output layer is rescaled so that every logit
+has mean zero and standard deviation one over a grid of $32^3$ points in the
+box, after which each label fills between $13\%$ and $30\%$ of it. Sines,
+cosines, weighted sums and $\tanh$ are all smooth in $x$, so the logits are
+smooth, and so are the interfaces between labels. These fields have no
+special structure, and their interfaces have no closed form.
+
+\paragraph{Enclosed power-diagram cell ($K=15$).} The field of
+Table~\ref{tab:exact} and Figure~\ref{fig:failure} is a power diagram with one
+site at $(0.02, -0.01, 0.03)$ and $14$ around it, at $0.55$ times the eight
+corners $(\pm1, \pm1, \pm1)$ of a cube and the six points $(\pm1.4, 0, 0)$,
+$(0, \pm1.4, 0)$ and $(0, 0, \pm1.4)$, each moved by independent Gaussian
+noise of standard deviation $0.06$. The central cell is a truncated cube with
+$14$ faces and $24$ corners, entirely inside the box.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{test_fields.png}
+\caption{The five test fields, extracted by our method at resolution $20$.
+Each surface is an interface, where the label with the largest logit changes,
+and each interface has its own color; triple curves are black and quadruple
+points yellow. The gray lines outline the box $[-1,1]^3$. The power diagram
+and the sector fan are drawn see-through, the first with its five sites as
+black dots, the second with a regular tetrahedron centered at $c$ (red) whose
+corners lie on the four triple lines, so that each region is the cone from $c$
+through one of its faces. One octant of the spherical shells is cut away to show the
+inner spheres. The neural fields fill the box with curved interfaces between
+all of their labels, which meet along many short triple curves. A surface
+ends only at a face of the box or at a triple curve, so an opening in a neural-field surface is either where the sheet
+leaves the box or a tunnel through the region it bounds.}
+\label{fig:testfields}
+\end{figure}
+
+Table~\ref{tab:vertexcounts} counts the vertices of each kind in these
+extractions. The kind of a vertex is set by the number $m$ of labels that tie
+there, not by the number $K$ of labels in the field. Crossings dominate every
+field, and quadruple points occur only where four regions meet. A field can
+have many labels and no quadruple point; in the spherical shells only
+neighboring shells touch.
+
+\begin{table}[htbp]
+\centering
+\caption{Vertices of each kind in the test fields at resolution $20$, by the
+number $m$ of labels tied at the vertex.}
+\label{tab:vertexcounts}
+\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+field & crossings ($m=2$) & triple points ($m=3$) & quadruple points ($m=4$) \\
+\midrule
+power diagram ($K=5$)    & $4\,629$  & $252$ & $2$ \\
+sector fan ($K=4$)       & $3\,962$  & $155$ & $1$ \\
+spherical shells ($K=4$) & $7\,040$  & $0$   & $0$ \\
+neural field ($K=4$)     & $14\,458$ & $1\,811$ & $10$ \\
+neural field ($K=6$)     & $17\,783$ & $3\,735$ & $109$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Features per cell}
+\label{sec:features-supp}
+
+Section~\ref{sec:solve} classifies the vertices of the output by the number
+of labels that tie at them and locates each by a small linear solve. This
+section completes that count, works one solve through by hand, and measures
+how often a cell carries more than one feature.
+
+\subsection{Kinds of vertex}
+
+A vertex of the output is a single point in 3D and is fixed by three
+equations, one for each coordinate. With fewer equations the solution is not
+a point; one equation gives a plane and two give a line. If $m$ labels tie, the
+tie gives $m-1$ equations, since setting $m$ values equal takes $m-1$
+equalities. The remaining $3-(m-1)$ must come from the tetrahedron $\tet$:
+lying on one of its faces is one equation, the plane of that face, and lying
+on an edge, where two faces meet, is two.
+
+For two labels, the tie $\interp_k = \interp_l$ is a plane, which crosses
+$\tet$ in a flat polygon, the interface patch if no other label is present.
+Its corners, the crossings, are where the plane meets the edges of $\tet$.
+For three labels the
+tie is a line, the triple curve, which becomes a point where it pierces a face
+of $\tet$. For four labels the tie is already a point and can lie anywhere
+inside $\tet$. Five labels would need $3-4=-1$ equations from the
+tetrahedron, which is impossible, so on a generic field at most four labels
+tie at any point (Proposition~\ref{prop:classify}).
+Table~\ref{tab:vertexkinds} summarizes the three cases.
+
+\begin{table}[htbp]
+\centering
+\caption{The three kinds of vertex. A point needs three equations; the tie
+supplies $m-1$ and the tetrahedron the rest.}
+\label{tab:vertexkinds}
+\begin{tabular}{@{}cccll@{}}
+\toprule
+tied labels $m$ & from the tie & from $\tet$ & the vertex lies & name \\
+\midrule
+2 & 1 (a plane) & 2 & on an edge & crossing \\
+3 & 2 (a line)  & 1 & on a face & triple point \\
+4 & 3 (a point) & 0 & inside $\tet$ & quadruple point \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The linear system}
+
+Equation~\eqref{eq:solve} is one small system per candidate tie, that is, per
+entity and label set, and $m$ is fixed within it: $m=2$ on an edge, $3$ on a
+face and $4$ in a tetrahedron. The equations contributed by $\tet$ never
+appear as rows. They are satisfied by construction, because the point is
+written in the barycentric coordinates $\lambda_0,\dots,\lambda_{m-1}$ of the
+face of $\tet$ that has exactly $m$ nodes, so the coordinates of the other
+nodes of $\tet$ are zero. These zeros are the $3-(m-1)$ equations from $\tet$.
+The condition $\sum_a \lambda_a = 1$ removes one more unknown, which leaves the
+$m-1$ unknowns $\lambda' = (\lambda_1,\dots,\lambda_{m-1})$ for the $m-1$ tie
+equations, a square system.
+
+As an example, take a triple point, $m = 3$, on a face with nodes
+$v_0 = (0,0,0)$, $v_1 = (1,0,0)$ and $v_2 = (0,1,0)$, which lies in the plane
+$z=0$; that plane is the one equation contributed by $\tet$. Let the tied
+labels be $S = \{l_0, l_1, l_2\}$, and let the logits $L_a = f(v_a)$ at the
+three nodes be
+\[
+\big(L_a[l_0],\, L_a[l_1],\, L_a[l_2]\big) =
+\begin{cases}
+(2,\, 0,\, 0) & a = 0,\\
+(0,\, 3,\, 0) & a = 1,\\
+(0,\, 0,\, 1) & a = 2.
+\end{cases}
+\]
+These values are chosen only to keep the arithmetic short. Each node favors
+one label, by $2$, $3$ and $1$, and gives the other two zero.
+The differences $d_a^{\,r} = L_a[l_0] - L_a[l_r]$ are
+$(d_0^{\,1}, d_1^{\,1}, d_2^{\,1}) = (2, -3, 0)$ for the pair $l_0, l_1$ and
+$(d_0^{\,2}, d_1^{\,2}, d_2^{\,2}) = (2, 0, -1)$ for the pair $l_0, l_2$.
+With $A_{ra} = d_a^{\,r} - d_0^{\,r}$ and $b_r = -d_0^{\,r}$,
+Equation~\eqref{eq:solve} becomes
+\[
+\begin{pmatrix} -5 & -2 \\ -2 & -3 \end{pmatrix}
+\begin{pmatrix} \lambda_1 \\ \lambda_2 \end{pmatrix}
+=
+\begin{pmatrix} -2 \\ -2 \end{pmatrix},
+\qquad\text{so}\qquad
+\lambda_1 = \tfrac{2}{11},\quad \lambda_2 = \tfrac{6}{11},\quad
+\lambda_0 = 1 - \lambda_1 - \lambda_2 = \tfrac{3}{11}.
+\]
+All three coordinates are positive, so the tie lies inside the face and passes
+the containment test. At this point the three interpolated logits are
+$2\cdot\tfrac{3}{11} = 3\cdot\tfrac{2}{11} = 1\cdot\tfrac{6}{11} = \tfrac{6}{11}$,
+equal as required, and the vertex is
+$x = \sum_a \lambda_a v_a = (\tfrac{2}{11}, \tfrac{6}{11}, 0)$. It is emitted
+if, in addition, no other label exceeds $\tfrac{6}{11}$ there, which is the
+dominance test. Had one of the coordinates come out negative, the three labels
+would tie outside the face, the configuration of
+Figure~\ref{fig:multifeature} (right), and the face would carry no triple
+point for this label set. A crossing ($m=2$) is the same computation with one
+equation and one unknown, $t = \lambda_1$, and a quadruple point ($m=4$) with
+three of each and no equation from $\tet$. The released implementation returns
+the same values for this input.
+
+\subsection{Cells with several features}
+
+A one-feature-per-cell table cannot represent an edge with two crossings or a
+face with two triple points. Table~\ref{tab:multiplicity} counts how often
+the configurations of Figure~\ref{fig:multifeature} occur in the test fields.
+Every field except the spherical shells has such edges, and three of them have
+such faces, so a table of this kind fails on ordinary input.
+
+\begin{table}[htbp]
+\centering
+\caption{Grid edges and faces carrying more than one feature, at resolution
+$20$. A one-feature-per-cell case table represents none of these.}
+\label{tab:multiplicity}
+\begin{tabular}{@{}lrr@{}}
+\toprule
+field & edges with $\ge 2$ crossings & faces with $\ge 2$ triple points \\
+\midrule
+power diagram ($K=5$)  & 46 & 3 \\
+sector fan ($K=4$)     & 21 & 0 \\
+spherical shells ($K=4$) & 0 & 0 \\
+neural field ($K=4$)   & 564 & 29 \\
+neural field ($K=6$)   & 1\,133 & 223 \\
+\midrule
+total & 1\,764 & 255 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Our method stores a vertex per entity \emph{and label set}, not per entity, so
+an edge with several crossings carries several vertices. On each mixed
+edge, one whose two endpoints have different labels, we solve the tie of every label pair and keep those that lie inside the
+edge and are not beaten. On the edge of Figure~\ref{fig:multifeature} (left)
+this keeps two crossings, one between labels $1$ and $3$ and one between $3$
+and $0$. Labels $1$ and $0$ also tie on this edge, but at a point where label
+$3$ is larger, so that tie is rejected. The two regions never meet on this
+edge, although a single crossing between the endpoint labels would place a
+wall between them there. The two kept crossings belong to different interfaces, and
+since assembly groups vertices by tetrahedron and label pair, the first
+becomes a corner of the $1|3$ patch and the second of the $3|0$ patch
+in every tetrahedron around the edge. Each vertex is computed once per global
+edge, so all of those tetrahedra share it. Faces with several triple points
+are handled the same way, with one vertex per surviving label triple.
+
+\section{Assembly}
+\label{sec:assembly-supp}
+
+This section gives the details of the assembly step of
+Section~\ref{sec:assembly}.
+
+\subsection{Patches and shared corners}
+
+Assembly builds one patch per tetrahedron and label pair, a flat polygon in
+the plane $\interp_k = \interp_l$. Triple curves and quadruple points are not
+triangulated separately. The output surface consists of the places where two
+labels tie, and the places where three or four regions meet appear as edges
+and corners shared by these pairwise patches. A vertex becomes a corner of
+every patch whose label pair is contained in its tied set. A
+crossing between labels $1$ and $2$ is a corner of the $1|2$ patch only. A
+triple point of $\{1,2,3\}$ is a corner of the three patches $1|2$, $1|3$ and
+$2|3$, and the triple-curve segment between two such points is an edge of all
+three. A quadruple
+point of $\{1,2,3,4\}$ is a corner of all six patches of its tetrahedron.
+
+Each shared corner is a single stored vertex, not a set of copies. The three
+patches around a triple curve therefore join exactly along it, without gaps
+or duplicated vertices, as the closure checks of
+Section~\ref{sec:closure-supp} confirm, and moving such a vertex during
+optimization moves all three patches together. The triple-curve segments that
+the extractor also returns are a list of these shared edges, used to measure
+curve length and to draw the curves; assembly does not use them.
+
+\subsection{Dominance on emitted triangles}
+
+Every corner of the $k|l$ patch has passed the dominance test against all $K$
+labels, so at each corner $p$ we have $\interp_k(p) = \interp_l(p) \ge
+\interp_j(p)$ for every other label $j$. Each triangle of the patch lies in
+one tetrahedron, where $\interp_k - \interp_j$ is affine, and a point $x$ of
+the triangle is a convex combination $x = \sum_i \gamma_i p_i$ of its corners, with
+$\gamma_i \ge 0$ and $\sum_i \gamma_i = 1$. An affine function takes such a combination
+of points to the same combination of its values, so
+\[
+\interp_k(x) - \interp_j(x) = \sum_i \gamma_i \big(\interp_k(p_i) - \interp_j(p_i)\big) \ge 0,
+\]
+since every term is a nonnegative weight times a nonnegative difference. A
+label that does not beat $k$ and $l$ at the corners therefore does not beat
+them anywhere on the triangle, and checking the corners suffices. In floating
+point the test lets a label exceed the tied pair by up to $10^{-12}$ at a
+corner (Section~\ref{sec:predicates}), and the same sum bounds it by $10^{-12}$
+on the whole triangle. Together with Propositions~\ref{prop:convex}
+and~\ref{prop:complete} and Corollary~\ref{cor:fan}, this means that the fan
+covers the true patch exactly, and since the regions partition the
+tetrahedron, patches of different pairs meet only along their shared edges
+and corners. If a label were missing from a cell's candidate set, which
+Proposition~\ref{prop:complete} excludes except for a region whose margin is
+below the tolerance (Section~\ref{sec:limitations}), a true corner would not
+be solved and the patch would have a hole; but every corner that is emitted
+has been tested against all $K$ labels, so the error is an omission and never
+a triangle on which another label wins.
+
+\subsection{Triangulation of a patch}
+
+Inside a tetrahedron the interface between labels $k<l$ is a convex polygon
+(Proposition~\ref{prop:convex}), but its corners arrive unordered, since they
+are crossings on the edges, triple points on the faces and possibly a
+quadruple point inside. The patch lies in the
+plane $\interp_l - \interp_k = 0$, whose normal $n = \nabla(\interp_l -
+\interp_k)$ is constant in the tetrahedron and points into region $l$. We pick
+two orthogonal unit vectors $e_1, e_2$ in that plane with $e_1 \times e_2 = n/\lVert n\rVert$, give each
+corner $p$ the angle $\psi = \operatorname{atan2}\big((p-\bar p)\cdot e_2,\,
+(p-\bar p)\cdot e_1\big)$ about the centroid $\bar p$ of the corners, sort by $\psi$,
+and join the first corner to each consecutive pair. Since the polygon is
+convex, its centroid lies inside it and the angular order is the order along
+the boundary, and a fan from one corner of a convex polygon covers it exactly
+without overlap. Because $n$ always points into the higher label, every
+triangle faces the same way.
+
+As an example, take a patch in the plane $z = 0.3$ with $n = (0,0,1)$, so that
+$e_1$ and $e_2$ can be taken along $x$ and $y$, and four corners that arrive
+in the order $p_1 = (0.2, 0.1)$, $p_2 = (0.6, 0.5)$, $p_3 = (0.6, 0.1)$ and
+$p_4 = (0.2, 0.6)$ in the $xy$-coordinates of that plane. Their centroid is
+$(0.4, 0.325)$, about which their angles are $-131.6^\circ$, $41.2^\circ$,
+$-48.4^\circ$ and $126.0^\circ$. Sorting gives the order $p_1, p_3, p_2, p_4$,
+which runs counterclockwise around the polygon, and the fan gives the
+triangles $(p_1, p_3, p_2)$ and $(p_1, p_2, p_4)$, with signed areas $0.08$
+and $0.10$. Both face along $n$, and together they cover the polygon's area of
+$0.18$. Fanning the corners in the order in which they arrived would instead
+give $(p_1, p_2, p_3)$ and $(p_1, p_3, p_4)$; the first faces the wrong way,
+with signed area $-0.08$, and the two triangles overlap while leaving part of
+the polygon uncovered (Figure~\ref{fig:fan}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\linewidth]{fan_example.png}
+\caption{Triangulating one patch. Left: the corners sorted by their angle
+about the centroid and fanned from $p_1$; both triangles face along the
+normal (positive signed area) and together cover the polygon. Right: the same
+corners fanned in arrival order; one triangle is flipped
+(negative signed area, hatched), the two overlap, and a part of the polygon is
+not covered.}
+\label{fig:fan}
+\end{figure}
+
+\section{Gradients}
+\label{sec:gradients-supp}
+
+This section expands Section~\ref{sec:gradients}. It gives the derivative of
+a vertex in closed form, states where the extracted mesh is differentiable,
+and reports the finite-difference check of Section~\ref{sec:further}.
+
+\subsection{Chain rule}
+
+The extractor is a map from the node logits $L$, the collection of the
+vectors $L_v \in \mathbb{R}^K$ over all grid nodes $v$, to the vertex
+positions of the output mesh. The node logits are in turn produced by the field, $L_v = f_\theta(v) +
+\varepsilon_v$, where $\theta$ denotes its parameters (centers and radii,
+power-diagram sites and weights, or the weights of a network) and
+$\varepsilon_v$ is the perturbation of Section~\ref{sec:degeneracy}, which is computed from a detached copy of the logits and so is treated as a constant. The grid nodes $v$ are fixed.
+For a loss $\mathcal{L}$ evaluated on the mesh, the chain rule gives
+\begin{equation}
+  \frac{\partial \mathcal{L}}{\partial \theta}
+  \;=\; \sum_{x} \frac{\partial \mathcal{L}}{\partial x}\,
+        \sum_{v} \frac{\partial x}{\partial L_v}\,
+        \frac{\partial f_\theta(v)}{\partial \theta},
+  \label{eq:chain}
+\end{equation}
+where $x$ runs over the mesh vertices. This is the chain rule from $\theta$
+through the node logits and the vertices to the loss. Each factor is a
+Jacobian, of size $1\times3$, $3\times K$ and $K\times P$ for $P$ parameters,
+and the inner sum has at most four nonzero terms, since a vertex depends only
+on the nodes of its simplex. The first factor depends on the loss and the last
+on the field; the middle factor is supplied by the extractor and
+is given in closed form below. ``Exact gradients'' means that \eqref{eq:chain}
+is, up to floating-point rounding, the derivative of the mesh that the
+extractor returns with $\varepsilon_v$ held fixed. With the perturbation off
+this is the returned mesh itself. With it on, $\varepsilon_v$ scales with
+$\max_{u,j}|L_u[j]|$ and so depends on $\theta$, and the two derivatives
+differ by $O(\varepsilon)$. Neither is the derivative of the true interface
+of $f_\theta$, from which the returned mesh differs by the interpolation
+error.
+
+\subsection{Derivative of a vertex}
+
+Consider a vertex with tied label set $S = \{l_0,\dots,l_{m-1}\}$ on the
+$(m-1)$-simplex with nodes $v_0,\dots,v_{m-1}$ and logit vectors
+$L_0,\dots,L_{m-1}$ (Section~\ref{sec:solve}). The solve \eqref{eq:solve},
+$A(L)\,\lambda' = b(L)$, gives its barycentric coordinates
+$\lambda' = (\lambda_1,\dots,\lambda_{m-1})$, with
+$\lambda_0 = 1 - \sum_{a\ge1}\lambda_a$, and its position is
+$x = v_0 + E\lambda'$, where the columns of $E \in \mathbb{R}^{3\times(m-1)}$
+are the edge vectors $v_a - v_0$. Let
+$\rho_r(\lambda, L) = \sum_{a=0}^{m-1} \lambda_a \big(L_a[l_0] - L_a[l_r]\big)$
+for $r = 1,\dots,m-1$, the difference $\interp_{l_0} - \interp_{l_r}$ at the
+point with barycentric coordinates $\lambda$. The vertex is where every
+$\rho_r$ vanishes, and substituting $\lambda_0$ gives $\rho = A\lambda' - b$,
+so $\partial\rho/\partial\lambda' = A$. Differentiating $\rho = 0$ at the
+vertex with respect to a logit $L_c[k]$ of one of the nodes gives
+$A\,\partial\lambda'/\partial L_c[k] + \beta = 0$, where
+$\beta = \partial \rho/\partial L_c[k]$ at fixed $\lambda$ has the components
+\begin{equation}
+  \beta_r \;=\; \frac{\partial \rho_r}{\partial L_c[k]}
+       \;=\; \begin{cases} \lambda_c & k = l_0,\\ -\lambda_c & k = l_r,\\ 0 & \text{otherwise}. \end{cases}
+  \label{eq:w}
+\end{equation}
+Hence the middle factor $\partial x/\partial L_{v_c}$ of \eqref{eq:chain} has
+the columns
+\begin{equation}
+  \frac{\partial x}{\partial L_c[k]}
+  \;=\; E\,\frac{\partial \lambda'}{\partial L_c[k]}
+  \;=\; -\,E A^{-1} \beta .
+  \label{eq:jac}
+\end{equation}
+The derivative is nonzero only for the
+nodes of the vertex's own simplex and only for the labels in $S$, so each
+vertex depends on at most $m^2$ of the node logits. A node $v_c$ contributes
+in proportion to its barycentric weight $\lambda_c$, so a vertex close to a
+node is sensitive mostly to that node. The derivative is a rational
+function of $L$, finite wherever $A$ is invertible. For a crossing, $m=2$,
+$x = v_0 + t\,(v_1 - v_0)$ with $t = \lambda_1 = d_0/(d_0 - d_1)$ and
+$d_a = L_a[l_0] - L_a[l_1]$, and \eqref{eq:jac} becomes
+$\partial x/\partial L_a[l_0] = -\,\partial x/\partial L_a[l_1]
+= (v_1 - v_0)\,\partial t/\partial d_a$ with
+\begin{equation}
+  \frac{\partial t}{\partial d_0} = \frac{-d_1}{(d_0-d_1)^2}, \qquad
+  \frac{\partial t}{\partial d_1} = \frac{d_0}{(d_0-d_1)^2}.
+  \label{eq:jac2}
+\end{equation}
+The implementation does not evaluate \eqref{eq:jac}; autograd differentiates
+the solve directly. On $200$ random simplices for each of $m = 2, 3, 4$,
+autograd through a direct implementation of \eqref{eq:solve} agrees with
+\eqref{eq:jac} to $10^{-15}$ relative error.
+
+\subsection{Changes of structure}
+
+The combinatorial structure of the output, namely which tied sets yield
+vertices and how the vertices are connected, is decided by inequalities on
+$L$: that the solution of \eqref{eq:solve} lies in its simplex
+($\lambda_a \ge -\delta$) and that no label outside $S$ exceeds the tied
+labels there by more than $\delta$, with the tolerance $\delta$ of
+Section~\ref{sec:predicates}. These decisions are taken on a detached copy of $L$, so they carry no
+gradient. On any open set of node logits on which all of them keep their
+outcome and every $A$ is invertible, the structure is constant and every
+vertex position is a smooth function of $L$ with derivative \eqref{eq:jac};
+hence so
+is any loss that is a smooth function of the vertex positions, such as an
+area, a volume or a length. On the boundary of such a set a vertex is created
+or removed, and the derivative of the loss need not exist there.
+Section~\ref{sec:contact} gives the example of contact onset,
+where a patch area is continuous but its derivative jumps from $-\pi r$ to
+$0$. The perturbation makes the invertibility of $A$ generic but does not
+remove these boundaries, which are a property of the quantity being
+differentiated.
+
+\subsection{Finite-difference check}
+
+To confirm that autograd returns the derivatives of what the extractor
+computes, we compare it against central finite differences, with step
+$10^{-6}$, of the loss $\sum_v (\langle w, v\rangle + \lVert v\rVert^2 +
+v_1 v_2 v_3)$ over the extracted vertices $v$, for a fixed $w$. A sum over
+the vertices does not depend on their order, which a change of parameter can
+permute without moving the surface. Each probe moves one parameter both
+ways; probes at which the vertex count changes are changes of structure,
+where a difference quotient is undefined, and are skipped and counted. The
+error of a probe is the gap between autograd and the finite difference $d$,
+divided by $\max(1, |d|)$.
+At resolution $12$ the worst is $1.1\times10^{-8}$ for a power diagram
+differentiated with respect to all sites and weights ($20$ probes),
+$2.6\times10^{-8}$ for shells with respect to radii and $3.7\times10^{-10}$ for a
+sector fan with respect to its center. A neural field smaller than those of
+Section~\ref{sec:fields-supp} ($K=4$, width $32$, $j \le 2$, seed $1$) gives
+$7.9\times10^{-8}$ at resolution $10$ for $81$ of its $2\,948$ weights,
+spread evenly over every layer and bias ($81$ probes, none skipped).
+
+\section{Cost scaling}
+\label{sec:scaling-supp}
+
+Section~\ref{sec:cost} argues that our construction is asymptotically more
+expensive than the incremental construction of Du et al.~\cite{du2022} but
+affordable in practice, because the work per entity is uniform enough to run
+as a fixed number of batched array operations. Table~\ref{tab:scaling}
+measures how the cost grows. Both sweeps run single-threaded on the CPU in
+float64. Peak memory is the largest resident set size during the call minus
+that before it, sampled by a separate thread, since a single reading after
+the call would miss the peak. Each row runs in a fresh process, because freed
+pages are not returned to the operating system and a row following a larger
+one would allocate inside the pages it still holds and report too little.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Extraction cost, single-threaded CPU, float64. Above: a $K=6$ power
+diagram refined. Below: power diagrams of $K$ sites at resolution
+$32$ ($196\,608$ tetrahedra, so that column is blank), with the mean
+candidate-set size in place of the cost per tetrahedron. The sites are drawn
+uniformly from $[-0.6, 0.6]^3$, with zero weights. Time is linear in
+the tetrahedron count and sublinear in $K$.}
+\label{tab:scaling}
+\begin{tabular}{@{}rrrrrr@{}}
+\toprule
+res. & tets & vertices & seconds & peak MB & $\mu$s/tet \\
+\midrule
+$16$ & $24\,576$    & $4\,167$  & $0.07$  & $39$    & $2.9$ \\
+$24$ & $82\,944$    & $8\,989$  & $0.21$  & $96$    & $2.6$ \\
+$32$ & $196\,608$   & $15\,666$ & $0.54$  & $198$   & $2.8$ \\
+$48$ & $663\,552$   & $34\,482$ & $1.89$  & $647$   & $2.9$ \\
+$64$ & $1\,572\,864$& $60\,662$ & $4.55$  & $1\,507$& $2.9$ \\
+$80$ & $3\,072\,000$& $94\,141$ & $8.94$  & $2\,944$& $2.9$ \\
+\midrule
+$K$ & & vertices & seconds & peak MB & labels/tet \\
+\midrule
+$3$  & & $8\,189$  & $0.42$ & $163$ & $1.06$ \\
+$4$  & & $10\,913$ & $0.49$ & $172$ & $1.08$ \\
+$6$  & & $14\,748$ & $0.54$ & $196$ & $1.11$ \\
+$9$  & & $19\,196$ & $0.71$ & $277$ & $1.14$ \\
+$12$ & & $21\,462$ & $0.84$ & $401$ & $1.15$ \\
+$16$ & & $25\,060$ & $1.11$ & $859$ & $1.18$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Refining the grid multiplies the tetrahedron count by $125$ and the wall time
+by $126$, so the growth is linear; this is seen more directly in the cost per
+tetrahedron, which stays between $2.6$ and $2.9\,\mu$s throughout. Raising
+$K$ from $3$ to $16$ costs a factor of $2.6$, well below the binomial growth
+that the enumeration would suggest, for the reason given in
+Section~\ref{sec:cost}. The mean candidate set grows only from $1.06$ to
+$1.18$ labels, because a tetrahedron sees few labels regardless of how many
+the field has. Memory is the binding constraint, at about one kilobyte per
+tetrahedron, so that three million tetrahedra need $2.9$\,GB and, by
+extrapolation, a machine with $16$\,GB would run out of memory somewhat
+beyond a resolution of $140$. The
+extractor is unoptimized PyTorch code running on the CPU; a GPU
+implementation could use the batched formulation directly.
+
+\section{Proofs}
+\label{sec:proofs-supp}
+
+The propositions are stated in Section~\ref{sec:guarantees}. All of the proofs
+use two properties of the $P_1$ interpolant: on each tetrahedron every
+$\interp^\tet_k$ is affine, and on a face or an edge $\interp$ depends only on
+the logits at its nodes. The results about a single cell follow from these and
+genericity alone. Conformity, completeness and differentiability also use the
+construction: shared edges and faces, the growth of the candidate sets, and
+closed-form solves decided on detached logits. Exactness on affine logits
+uses the interpolant and the construction. Each proof uses only results
+proved before it.
+
+\subsection{Properties of a single cell}
+\label{sec:proofs-cell}
+
+\paragraph*{Proposition~\ref{prop:convex} (Convexity).}
+\begin{proof}
+$\interp^\tet_k - \interp^\tet_j$ is affine, so
+$\{\interp^\tet_k \ge \interp^\tet_j\}$ is a closed half-space, all of space
+or empty, and $\dregion{k}\cap\tet$, the intersection of $\tet$ with $K-1$
+such sets, is a convex polyhedron. The patch
+$\dregion{k}\cap\dregion{l}\cap\tet$ is the set where
+$\interp_k = \interp_l \ge \interp_j$ for every $j$, that is, this polyhedron
+cut by the set $\{\interp_k=\interp_l\}$. On a generic field
+$\interp_k - \interp_l$ is not identically zero on $\tet$, so that set is a
+plane or empty and the patch is a convex polygon; this is where genericity is
+used, since were the two labels equal throughout $\tet$, the patch would be
+the whole of $\dregion{k}\cap\tet$.
+\end{proof}
+
+\paragraph*{Corollary~\ref{cor:fan}.}
+\begin{proof}
+The corners of a patch are the vertices of the convex polygon of
+Proposition~\ref{prop:convex}, so the patch is their convex hull, and the
+triangulation is that of Section~\ref{sec:assembly-supp}. It remains to
+check that on a generic field a non-empty patch is two-dimensional with
+distinct corners in strictly convex position. A patch that is a segment or a
+point is cut down to it either by $\tet$, when the plane
+$\{\interp_k=\interp_l\}$ meets $\tet$ only along an edge or at a node, so
+that its vertices lie on the boundary of their simplex, or by a third label
+that ties with $k$ and $l$ along the whole of it, which is a degenerate tie.
+Two coinciding corners carry either different tied sets, so that at one of
+them a label outside its tied set equals it, or the same tied set on two
+different simplices, so that the point lies on the boundary of both. Three
+collinear corners make two of the lines bounding the polygon coincide, which
+puts a triple curve in a facet of $\tet$, four labels in a tie along a line,
+or an edge of $\tet$ in the plane of the patch. Genericity excludes each of
+these.
+\end{proof}
+
+\paragraph*{Proposition~\ref{prop:classify} (Vertex classification).}
+\begin{proof}
+Let the labels of a set $S$ with $|S| = m$ tie at the vertex, and fix
+$k \in S$. A fifth label tying there would be exactly equal to the tied set
+of the other four, which genericity excludes, so $m \le 4$. The vertex is a
+corner of the convex polyhedron $\dregion{k}\cap\tet$
+(Proposition~\ref{prop:convex}), so the constraints active at it have rank
+three. On a generic field these are the $m-1$ equalities
+$\interp_k = \interp_j$, $j \in S\setminus\{k\}$, and the facet planes of
+$\tet$ through the vertex; no other label equals the tied set there. The
+$m-1$ equalities are independent, since the system \eqref{eq:solve} of the
+tie is nonsingular. This is where genericity is used. For the degenerate
+field $f_1 \equiv 0$, $f_2 = x_1$, $f_3 = 2x_1$ all three labels tie on the
+whole plane $x_1 = 0$, and $m = 3$ supplies one constraint instead of two.
+The facet planes must supply the remaining $4-m$ independent constraints, so
+the vertex lies on at least $4-m$ facets of $\tet$, whose common face has
+dimension at most $m-1$. On a generic field the vertex does not lie on the
+boundary of that face, so the dimension is exactly $m-1$.
+\end{proof}
+
+\paragraph*{Proposition~\ref{prop:plateau} (Force balance at triple curves).}
+\begin{proof}
+The patch separating $k$ and $l$ lies in the level set of
+$\interp_l - \interp_k$, whose gradient is $g_l - g_k = n_{kl}$. The sum
+$n_{kl} + n_{lp} + n_{pk} = (g_l - g_k) + (g_p - g_l) + (g_k - g_p)$
+telescopes to zero. The curve lies in both the $k|l$ and the $l|p$ patch, so
+its direction is orthogonal to $n_{kl}$ and $n_{lp}$, and by the vanishing sum
+also to $n_{pk}$.
+
+For the angles, place the origin at a point of the curve, so that the three
+interpolated logits share their value there and their constant terms may be
+dropped, and work in the plane $\Pi$ orthogonal to the curve. Let $a_k$ be the projection of
+$g_k$ onto $\Pi$, so that $n_{kl} = a_l - a_k$. Near the curve the three
+labels are the only contenders, so a neighborhood of the origin in $\Pi$ is
+partitioned into the argmax cones of the linear maps $x \mapsto a_k\!\cdot\!x$.
+The cone occupied by label $l$ is
+$\{x : (a_l - a_k)\!\cdot\!x \ge 0,\ (a_l - a_p)\!\cdot\!x \ge 0\}$, which is
+the normal cone of the triangle $a_k a_l a_p$ at its vertex $a_l$. A cone
+bounded by two half-planes with inward normals $q$ and $q'$ has opening angle
+$180^\circ$ minus the angle between $q$ and $q'$, so the dihedral angle of
+region $l$ is $180^\circ$ minus the interior angle of the triangle at $a_l$,
+and the three dihedral angles sum to $3\cdot180^\circ - 180^\circ = 360^\circ$.
+The triangle is non-degenerate because $n_{kl}$ and $n_{lp}$ are
+independent, which is the condition for three patches rather than two to meet
+along the curve. All three dihedral angles equal $120^\circ$ if and only if
+all three interior angles equal $60^\circ$, that is, if and only if the
+triangle is equilateral, which means that its side lengths
+$\|a_l - a_k\| = \|n_{kl}\|$, $\|n_{lp}\|$ and $\|n_{pk}\|$ are equal.
+\end{proof}
+
+\subsection{Properties of the construction}
+\label{sec:proofs-construction}
+
+\paragraph*{Proposition~\ref{prop:conform} (Conformity).}
+\begin{proof}
+$\interp^\tet|_\varphi$ and $\interp^{\tet'}|_\varphi$ are both the $P_1$
+interpolant of the same three node logit vectors, so they are one function;
+a crossing on an edge of $\varphi$ is determined by \eqref{eq:solve} from the
+two node logit vectors of that edge, and a triple point in $\varphi$ from its
+three. In the implementation the agreement is exact rather than up to
+rounding, because edges and faces are not enumerated per tetrahedron but
+deduplicated into global entities keyed by their sorted node indices. Each
+face is a single entity with one ordering of its nodes, its vertices are
+solved once from that ordering, and $\tet$ and $\tet'$ refer to the result,
+position and acceptance decision alike, by the same index.
+
+A four-label tie is solved per tetrahedron, from four node logit vectors, so
+$\tet$ and $\tet'$ would solve different systems for one. On a generic field
+such a tie lies strictly inside its tetrahedron and never on $\varphi$, which
+is why genericity is assumed.
+\end{proof}
+
+\paragraph*{Proposition~\ref{prop:complete} (Completeness of the candidate sets).}
+\begin{proof}
+Edges come first. Every label pair is tested on an edge whose endpoints
+differ, and an edge whose endpoints carry the same label carries no other,
+since each region meets an edge in a single interval
+(Proposition~\ref{prop:convex}). Every label whose region meets an edge is
+therefore found on it.
+
+Now let $\sigma$ be a face or a tetrahedron, let $S$ be its candidate set when
+the growth stops, and suppose that the region of a label $q \notin S$ meets
+$\sigma$. The set $S$ contains every label whose region meets the boundary of
+$\sigma$, for a face by the case of edges and for a tetrahedron by the case
+of faces, since the set of a tetrahedron is seeded from the final sets of its
+faces. On the affine span of $\sigma$ consider
+\[
+  h(x) \;=\; \interp_q(x) - \max_{j \in S} \interp_j(x)
+       \;=\; \min_{j \in S} \big(\interp_q(x) - \interp_j(x)\big),
+\]
+a minimum of affine functions, hence concave and piecewise affine. On the
+boundary of $\sigma$ the largest label lies in $S$, so $h \le 0$ there. On a
+generic field $q$ is strictly the largest label at some point of the relative
+interior of $\sigma$, so $h > 0$ there. The set $\{h > 0\}$ is convex, meets
+the interior of $\sigma$ and not its boundary, and therefore lies inside
+$\sigma$. The maximum of $h$ is thus attained, and the set of maximizers is
+convex and bounded. Let $x^\ast$ be one of its extreme points, and call a
+piece $\interp_q - \interp_j$ active if it equals $h$ at $x^\ast$. The
+gradients of the active pieces, taken within the affine span of $\sigma$,
+contain $0$ in their convex hull, since $x^\ast$ maximizes the concave
+function $h$, and span every direction of that span, since otherwise $h$
+would be constant on a segment through $x^\ast$ and $x^\ast$ would not be an
+extreme point. In $d = \dim\sigma$ dimensions this takes at least $d+1$
+gradients, since $d$ spanning vectors are independent and $0$ is not a convex
+combination of independent vectors. At $x^\ast$, then, at least $d+1$ labels
+of $S$ tie as the largest of $S$, and on a generic field exactly $d+1$. The
+enumeration tries this label set, finds its tie at $x^\ast$ inside
+$\sigma$, and finds it beaten, since
+$\interp_q(x^\ast) > \max_{j\in S}\interp_j(x^\ast)$. The label that is
+largest at $x^\ast$ is therefore not in $S$, and the growth adds it, which
+contradicts the assumption that the growth has stopped.
+
+In floating point the tie at $x^\ast$ counts as beaten only by a margin
+above $\delta$. Since $h \ge \interp_q - \max_{j \ne q}\interp_j$, this holds
+whenever $q$ exceeds every other label by more than $\delta$ somewhere in
+$\sigma$.
+\end{proof}
+
+\paragraph*{Proposition~\ref{prop:diff} (Differentiability).}
+\begin{proof}
+The predicates deciding the structure are the argmax at each node, which gates
+which edges are examined at all, containment of each candidate tie in its
+simplex, and dominance at each tie. By hypothesis every one of them holds
+strictly at $\theta_0$, and each is a strict inequality between functions of
+$\theta$ that are continuous near $\theta_0$, the tie positions because
+$\det A \neq 0$ for every enumerated label set, so all of them are locally
+constant. Strictness is
+needed for the rejected candidates as much as for the accepted ones, since a
+candidate beaten by exactly zero margin is admitted by the extractor but
+eliminated by an arbitrarily small perturbation, which changes the structure.
+With the
+structure fixed, a vertex is $\sum_a \lambda_a v_a$ with
+$\lambda' = A(L)^{-1}b(L)$, a rational function of $L$ with non-vanishing
+denominator, composed with the differentiable map
+$\theta \mapsto L = f_\theta(\text{nodes})$. Reverse-mode accumulation over
+that composition realizes its Jacobian because the combinatorial decisions are
+taken on detached logits and contribute no edges to the graph; with the
+perturbation on, this is the Jacobian with its displacement held fixed
+(Section~\ref{sec:gradients-supp}).
+\end{proof}
+
+\subsection{Exactness on affine logits}
+\label{sec:proofs-affine}
+
+\paragraph*{Proposition~\ref{prop:affine} (Exactness on affine logits).}
+\begin{proof}
+The $P_1$ interpolant is linear in the node values and reproduces affine
+functions, so $\interp_k - \interp_l$, the interpolant of the affine function
+$f_k - f_l$, equals it. The argmax of $\interp$ is therefore that of $f$,
+\eqref{eq:dregion} defines the closures of the regions $\region{k}$, and the
+object to be extracted is the exact partition of $f$. On a generic field,
+which is where genericity is used, every vertex of the partition is a tie of
+$m \le 4$ labels on a face of dimension $m-1$
+(Proposition~\ref{prop:classify}), the candidate set of that face holds all
+$m$ labels (Proposition~\ref{prop:complete}), so the tie is enumerated, and
+it is kept, since it lies in its simplex and no label beats it there; no
+other tie is kept, since dominance is tested against all $K$ labels.
+Corollary~\ref{cor:fan} and
+Proposition~\ref{prop:conform} then assemble these vertices into the
+complex. For the second claim, the power cell of site $c_k$ with weight $w_k$
+is defined by minimizing $\|x-c_k\|^2 - w_k$~\cite{aurenhammer1987}, that is,
+by maximizing the logit $-\|x-c_k\|^2 + w_k$ of
+Section~\ref{sec:fields-supp}, and the difference of two such logits,
+$2(c_k - c_l)\!\cdot\!x - \|c_k\|^2 + \|c_l\|^2 + w_k - w_l$, is affine.
+\end{proof}
+
+\section{Five regions meeting at a point}
+\label{sec:degentest-supp}
+
+Section~\ref{sec:degeneracy} resolves exact coincidences by displacing the
+logits rather than deciding them exactly, the weaker of the two guarantees
+(Section~\ref{sec:related}). This section measures the error that the displacement introduces.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\linewidth]{setup_degeneracy.png}
+\caption{The degeneracy test. Left: five power-diagram sites (black) on a
+sphere of radius $0.6$ (gray). The colored polygons are the interfaces
+between the cells, cut to a cube around the center. The center of the
+sphere (red star) is equidistant from all five, so the five cells meet there. Right: pushing one site outward by $t = 0.1$
+(red segment) splits the meeting point into two quadruple points (yellow),
+$0.094$ apart. Table~\ref{tab:degeneracy} lets $t$ shrink, so the two
+points merge again.}
+\label{fig:degensetup}
+\end{figure}
+
+The test uses the degeneracy that has no analog with two labels. In 3D four
+regions meet at a point generically, five only by coincidence, for example
+when five sites lie on a common sphere, whose center is then equidistant from
+all five. Pushing one site outward by $t$ splits this point into two
+quadruple points about $t$ apart, so letting $t$ shrink drives the
+configuration toward the degeneracy. For each $t$ the exact
+quadruple points are computed by an independent enumeration.
+Figure~\ref{fig:degensetup} shows the configuration, and
+Table~\ref{tab:degeneracy} reports the largest distance from a true quadruple
+point to the nearest extracted one for $t$ from $10^{-1}$ down to $10^{-10}$.
+
+Close to a degeneracy, the perturbation of Section~\ref{sec:degeneracy}, of
+size $\varepsilon$, could in principle move a vertex by as much as
+$\varepsilon/t$. The measured error is instead at most $1.79\varepsilon$ and
+does not grow as $t$ shrinks, even when the two points are only $10^{-10}$
+apart, and it is the same multiple of $\varepsilon$ for all three sizes until
+$\varepsilon$ is ten times their separation. The error stays bounded because
+each quadruple point solves its own $3\times3$ system, the ties among its
+four labels, which the fifth label does not enter. With the perturbation switched off the
+error is at most $1.1\times10^{-16}$ throughout.
+
+The ratio changes only in the last column, from $0.85$ to $0.51$ and $0.46$
+at $t \le 10^{-9}$, where $\varepsilon = 10^{-8}$ is ten to a hundred times the
+separation of the two points. The positions are still accurate to
+$O(\varepsilon)$ there, but the relative arrangement of the two points is no
+longer resolved. The perturbation therefore has to stay below the smallest
+feature of the geometry.
+
+It must also be large enough. With $s$ the logit scale and $\delta = 10^{-12}$
+the tolerance of Section~\ref{sec:predicates}, two labels tied at a node move at least
+$\varepsilon s/K$ apart, so the crossings there lie more than $\delta$ inside
+their edges once $\varepsilon > 2K\delta$ ($3.2\times10^{-11}$ at $K = 16$).
+The two-label field $f(x) = (x_1, 0)$, whose labels tie on the whole grid
+plane $x_1 = 0$, gives a closed mesh at resolution $48$, one that passes the
+check of Section~\ref{sec:closure-supp}, for
+every $\varepsilon$ from $10^{-11}$ to $10^{-7}$. Ties of three labels are not
+covered. On the three-label field $f(x) = (x_1, 0, x_2)$, whose labels all tie
+on the grid line $x_1 = x_2 = 0$, at $637$
+nodes over the $13$ even resolutions from $36$ to $60$, $13$, $10$, $2$ and $1$ meshes
+are open, that is, fail that check, at $\varepsilon = 10^{-11}$, $10^{-10}$, $10^{-9}$ and $10^{-8}$, all
+holes within a grid step of the line.
+
+This test measures position error on one family of configurations; the exact
+predicates of Du et al.~\cite{du2022} guarantee correct combinatorial
+structure on every input.
+
+\begin{table}[htbp]
+\centering
+\caption{Largest distance from a true quadruple point to the nearest
+extracted one. $t$ is the outward displacement of one site and
+\emph{sep} the separation of the two quadruple points.
+$\varepsilon$ is the size of the logit perturbation of
+Section~\ref{sec:degeneracy}, set independently
+of $t$, so each error column is a separate extraction of the same field. The
+third column gives the error with the perturbation off, and the last three
+give it as a multiple of $\varepsilon$ for three sizes around the default
+$10^{-9}$.}
+\label{tab:degeneracy}
+\begin{tabular}{@{}rrrrrr@{}}
+\toprule
+& & $\varepsilon=0$ & \multicolumn{3}{c}{error$/\varepsilon$} \\
+\cmidrule(l){4-6}
+$t$ & sep & error & $\varepsilon=10^{-12}$ & $10^{-10}$ & $10^{-8}$ \\
+\midrule
+$10^{-1}$  & $9.4\!\times\!10^{-2}$  & $1.1\!\times\!10^{-16}$ & $1.79$ & $1.79$ & $1.79$ \\
+$10^{-3}$  & $9.9\!\times\!10^{-4}$  & $2.3\!\times\!10^{-17}$ & $0.89$ & $0.89$ & $0.89$ \\
+$10^{-5}$  & $9.9\!\times\!10^{-6}$  & $1.6\!\times\!10^{-17}$ & $0.85$ & $0.85$ & $0.85$ \\
+$10^{-7}$  & $9.9\!\times\!10^{-8}$  & $2.0\!\times\!10^{-17}$ & $0.85$ & $0.85$ & $0.85$ \\
+$10^{-9}$  & $9.9\!\times\!10^{-10}$ & $1.6\!\times\!10^{-17}$ & $0.85$ & $0.85$ & $0.51$ \\
+$10^{-10}$ & $9.9\!\times\!10^{-11}$ & $1.6\!\times\!10^{-17}$ & $0.85$ & $0.85$ & $0.46$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Vertex distance to the interface}
+\label{sec:pointwise-supp}
+
+Volume and area are integrals over the whole surface, so they can show that
+a surface is wrong but not where. A local quantity is
+the distance from each vertex to the interface it should lie on. On a power
+diagram this has a closed form. Each difference $f_i - f_j$ is affine, so if
+$f_i$ and $f_j$ are the two largest logits at a vertex, dividing $f_i - f_j$
+there by $\lVert\nabla(f_i-f_j)\rVert = 2\lVert c_i - c_j\rVert$ gives the
+exact distance from the vertex to the plane where the two are equal. The
+distance is zero exactly when the vertex lies on an interface.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{interface_accuracy.png}
+\caption{Distance from each extracted vertex to the interface, on the enclosed
+cell of Figure~\ref{fig:failure}. Top: the cell at resolution $16$, with its
+$14$ neighbors hidden. A face is gray if its vertices are on the interface to
+floating-point precision, and otherwise colored by the distance of its
+farthest vertex, in grid cells. Corner-label case analysis is off
+only along the edges of the cell, and \texttt{vtkSurfaceNets3D}, given the
+argmax of the field, is off everywhere. Bottom: the worst and median distance
+against resolution, and every distance at resolution $48$. Our method is run
+with the perturbation disabled, so that its floor is at machine
+precision; enabling it raises the floor to its magnitude, as in
+Table~\ref{tab:exact}.}
+\label{fig:accuracy}
+\end{figure}
+
+Figure~\ref{fig:accuracy} applies this measure to the enclosed cell of
+Table~\ref{tab:exact} and Figure~\ref{fig:failure}, a truncated cube enclosed
+by $14$ other cells. The polyhedron is extracted from the same field on the
+same grid in three ways: by our method, by corner-label case analysis
+(Section~\ref{sec:failure}), and by \texttt{vtkSurfaceNets3D}~\cite{vtk}.
+SurfaceNets is the multi-label extractor of VTK, with one pass
+over the labels, points and cells shared between adjacent regions and no gaps
+to repair, but it takes a label map, so it is given the argmax of the field
+at the grid nodes. The top row of the figure shows the three surfaces at
+resolution $16$. A face is gray if its vertices lie on the interface to
+machine precision, and otherwise colored by the distance of its farthest
+vertex, from yellow near zero to dark red at half a grid cell or more. The
+bottom row gives the worst and median distance against resolution, and the
+distance of every vertex at resolution $48$, the resolution of the numbers
+below.
+
+Our method places each of its $8\,819$ vertices on the interface to machine
+precision, so its surface is gray throughout, and it recovers each of the
+$24$ corners of the polyhedron to within $10^{-14}$. The corner-label method
+places most vertices exactly, but $2.0\%$ are off the interface, the worst by
+$8.0\times10^{-2}$, which is $1.93$ grid cells. Nearly all of them lie within
+a grid cell of an edge of the polyhedron, that is, of a triple curve, where
+the labels at the corners of a grid cell do not determine its patch; in the
+top row they form the colored slivers along the edges. This worst case does
+not converge, moving only from $9.3\times10^{-2}$ at resolution $8$ to
+$8.0\times10^{-2}$ at $48$, because the number of grid faces that a triple
+curve passes near grows as fast as the number it crosses
+(Section~\ref{sec:failure}), so refinement does not thin them out.
+
+Every SurfaceNets vertex is off the interface, by $3.3\times10^{-3}$ at the
+median and $1.6\times10^{-2}$ at worst, and the error converges at roughly
+first order. The error comes from its input, since a label map records only
+which label wins at each node, and the logits that locate the interface
+between nodes cannot be recovered from it. Its
+surface is therefore off everywhere by a fraction of a grid cell, so that
+every face in the top row is colored, and the edges and corners of the
+polyhedron are rounded. We include the
+comparison because label maps are what segmentation pipelines usually pass to
+a surface extractor, and Section~\ref{sec:realdata} shows the same effect on
+the output of a trained network.
+
+\section{Single-value checks}
+\label{sec:checks-supp}
+
+This section reports the single-value checks of Section~\ref{sec:further}, in the same order, except the gradient check, which is in
+Section~\ref{sec:gradients-supp} next to the derivative it tests. The fields
+are those of Section~\ref{sec:fields-supp}.
+
+\subsection{Convergence on curved interfaces}
+\label{sec:curved-supp}
+
+On a curved interface exactness is impossible, and the relevant question is
+the order at which the error decreases under refinement. On the spherical
+shells the extracted area of the innermost interface, the sphere of radius
+$0.30$, has relative error
+$4.56\times10^{-2}$, $2.01\times10^{-2}$, $1.12\times10^{-2}$ and
+$5.00\times10^{-3}$ at resolutions $16, 24, 32, 48$, which corresponds to a
+least-squares fitted rate of $2.01$ (Figure~\ref{fig:convergence}, right).
+Second order is the order that a $P_1$ interpolant of the logits supports,
+and it is also the order of marching cubes on a smooth two-label field. The
+shells have no junctions;
+convergence at curved junctions is measured on the double bubble
+(Section~\ref{sec:doublebubble}).
+
+\subsection{Tied logits at emitted vertices}
+\label{sec:consistency-supp}
+
+Every emitted vertex is defined as a point at which a given set of logits
+tie (Equation~\eqref{eq:solve}). This check tests
+whether the emitted position satisfies that definition independently of the
+implementation of the solve. The interpolant is recomputed
+at each emitted vertex by locating it in the grid and evaluating
+\eqref{eq:interp}, and the spread among the logits that are supposed to tie,
+the largest minus the smallest, is measured. Over five fields at resolution $14$, the worst spread is $4.4\times10^{-16}$
+(power diagram, $2\,499$ vertices), $2.2\times10^{-16}$ (sector fan, $2\,106$),
+$5.6\times10^{-17}$ (shells, $3\,402$), $2.1\times10^{-15}$ (neural $K=4$,
+$8\,460$) and $2.8\times10^{-15}$ (neural $K=6$, $11\,418$).
+
+\subsection{Closure and orientation}
+\label{sec:closure-supp}
+
+Each extracted region should be a closed surface with a consistent
+orientation. We check this one triangle side at a time. Every side of every
+triangle is examined together with the label pair of its patch. A side may be used only
+once if it lies on a triple curve, where three patches meet along a
+non-manifold edge, or on $\partial\Omega$, where the surface is legitimately
+cut off; every other side must be used exactly twice and traversed in
+opposite directions by its two users. A mesh that passes this check is what
+we call closed, or watertight. Across five fields at resolutions $12$
+and $20$, with up to $45\,446$ triangles and $74\,901$ sides, there are no
+unpaired sides, no inconsistently oriented sides and no patches with too few
+corners.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{exploded_regions.png}
+\caption{Left: the enclosed cell of Table~\ref{tab:exact} at resolution $20$,
+with its analytically computed corners (yellow) overlaid; its volume agrees
+with the closed form to $8\times10^{-10}$, the size of the perturbation. Right: the five regions of the power diagram of
+Section~\ref{sec:fields-supp}, pulled apart from their common center. Each is
+an oriented surface, closed except where the box cuts it off. Its faces on
+the box are not part of the output; they are computed from the exact cell
+and drawn pale.
+Neighboring regions share the vertices of their common interface.}
+\label{fig:exploded}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{arrangement_3d.png}
+\caption{The five-site power diagram of Section~\ref{sec:fields-supp} at
+resolutions $8$, $16$ and $32$. The panels are indistinguishable because, by Proposition~\ref{prop:affine}, the geometry is
+recovered exactly at each resolution and only the triangle count changes.}
+\label{fig:arrangement}
+\end{figure}
+
+Since these five fields were chosen by hand, they do not test closure on an
+arbitrary field. The same check is repeated on
+forty fields drawn without inspection, eight seeds each of the neural field at
+$K=4$ and $K=6$, both of width $48$, and of power diagrams of $4$, $6$ and
+$9$ sites drawn uniformly from $[-0.6, 0.6]^3$, with zero weights, and none
+of them produces an unpaired or inconsistently oriented side. We do not prove
+closure, and the propositions of the paper do not imply it; the evidence for
+it is empirical. Figure~\ref{fig:exploded} shows the result.
+Each region is an oriented surface, closed except on $\partial\Omega$, and
+neighboring regions share the vertices of their common interface. Figure~\ref{fig:arrangement} shows the
+same power diagram from the outside at three resolutions. The panels look
+the same, because on affine logits (Proposition~\ref{prop:affine})
+refinement changes only the triangle count.
+
+\FloatBarrier
+\subsection{Dihedral angles at triple curves}
+\label{sec:plateau-supp}
+
+On a symmetric sector fan every dihedral angle along a triple curve is known
+in closed form, so the identity of Proposition~\ref{prop:plateau} can be
+checked in floating point. The angles are computed at each extracted
+triple-curve segment from field gradients, since the $k|l$ patch is the level
+set of $f_k-f_l$ and its normal at the curve is $\nabla(f_k-f_l)$ there; on
+this field the patches are flat, so the triangles would give the same angles.
+Over $155$ segments the
+worst deviation from $120^\circ$ is $1.4\times10^{-14}$ degrees
+(Figure~\ref{fig:plateau}).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.86\textwidth]{triple_curves_120.png}
+\caption{Dihedral angles along the triple curves of a symmetric sector fan.
+The angles are $120^\circ$ to machine precision, as
+Proposition~\ref{prop:plateau} predicts when the three patch normals have
+equal length, which the symmetry of the fan ensures.}
+\label{fig:plateau}
+\end{figure}
+
+\section{Agreement with the exact baseline}
+\label{sec:headtohead-supp}
+
+Section~\ref{sec:headtohead} states the result of this comparison. This
+section describes the cases, how the two implementations are given identical
+input, and the one input on which they differ. Figure~\ref{fig:dusetup} shows
+the four analytic cases; the power diagram and the neural field are those of
+Figure~\ref{fig:testfields}, and the liver segmentation is that of
+Figure~\ref{fig:realdata}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{setup_du.png}
+\caption{The four analytic cases of the comparison with Du et al., written in
+the primitives their tool accepts. From left: their published $18$-sphere
+example, eight random spheres, five random planes and twelve random planes.
+Top: the primitives, overlapping spheres or planes (each plane a disk with a
+tick along its normal). Bottom: a planar slice of the argmax partition,
+showing which label wins at each point; black circles are the spheres cut by
+that slice. Each label's logit is the signed distance to its primitive,
+positive inside the sphere or on the normal side of the plane, so every point
+of the box takes a label, also outside all of the spheres.
+Table~\ref{tab:headtohead} compares the two extractions of each case.}
+\label{fig:dusetup}
+\end{figure}
+
+Both implementations read the same tetrahedra and the same field values, so
+the comparison tests the algorithms alone. The reference normally
+generates its own grid, so we pass ours through its \texttt{tetMeshFile}
+input. Its loader evaluates analytic primitives at the grid nodes, which
+covers the sphere and plane cases. For fields without a closed form we added
+a loader path that reads per-vertex values. It stores the values where the
+analytic branches store theirs and leaves the arrangement code unchanged. The
+control row of Table~\ref{tab:headtohead} tests it. A field that the loader
+can evaluate analytically is sent through the per-vertex path instead, and
+the result must be the same. We make no other change to the reference. The
+perturbation is switched off, because it displaces the logits and the
+reference does not, so the two would differ by construction at exactly the
+coincidences the comparison should test. The build recipe for the reference,
+the loader patch and the comparison harness are released with our code.
+
+\begin{table}[htb]
+\centering
+\small
+\caption{Our extractor compared with the reference implementation of Du et
+al.~\cite{du2022} on identical tetrahedra. $K$ is the number of channels of
+the field, not all of which need occur; in the clinical window six of the
+nine do. Vertices, polygons and patches are counted as the reference counts
+them (\texttt{num\_MI\_verts}, \texttt{num\_MI\_faces} and
+\texttt{num\_patches}, MI for material interface): a polygon is the part of
+one interface inside one tetrahedron, and a patch is a connected union of
+polygons with the same label pair, which is why the clinical row reads $16$ where
+Section~\ref{sec:realdata} counts $11$ distinct labeled interfaces on the
+same window. A single entry means that the two produced the same value. The
+vertex gap is the Hausdorff distance between the two vertex sets, that is,
+the largest distance from a vertex of either to the nearest vertex of the
+other, in millimeters for the clinical field. The
+generic clinical row adds uniform noise of width $10^{-7}$ to that field
+before either extractor reads it, removing its exact coincidences; the last
+row leaves them in place, and its entries are reference/ours.}
+\label{tab:headtohead}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+field & $K$ & tets & vertices & polygons & patches & vertex gap \\
+\midrule
+\multicolumn{7}{@{}l}{\emph{reference primitives, evaluated analytically at both ends}} \\
+\quad reference 18-sphere example & $18$ & $55\,566$ & $12\,201$ & $17\,885$ & $70$ & $3.3\!\times\!10^{-16}$ \\
+\quad 8 spheres               & $8$  & $82\,944$ & $8\,581$  & $12\,629$ & $16$ & $3.1\!\times\!10^{-16}$ \\
+\quad 5 planes                & $5$  & $82\,944$ & $5\,798$  & $8\,435$  & $9$  & $3.2\!\times\!10^{-16}$ \\
+\quad 12 planes               & $12$ & $48\,000$ & $6\,775$  & $9\,892$  & $27$ & $3.5\!\times\!10^{-16}$ \\
+\addlinespace
+\multicolumn{7}{@{}l}{\emph{delivered to the reference as per-vertex values}} \\
+\quad 5 planes (control)      & $5$  & $82\,944$ & $5\,798$  & $8\,435$  & $9$  & $3.2\!\times\!10^{-16}$ \\
+\quad power diagram           & $5$  & $82\,944$ & $6\,953$  & $10\,382$ & $9$  & $4.6\!\times\!10^{-16}$ \\
+\quad neural field            & $6$  & $82\,944$ & $30\,277$ & $44\,441$ & $201$ & $4.0\!\times\!10^{-16}$ \\
+\quad clinical liver, generic & $9$  & $663\,552$& $34\,762$ & $51\,617$ & $16$ & $1.1\!\times\!10^{-14}$ \\
+\addlinespace
+\multicolumn{7}{@{}l}{\emph{with exact coincidences left in the input}} \\
+\quad clinical liver, as given& $9$  & $663\,552$& $34\,707/34\,644$ & $51\,565/51\,522$ & $16$ & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph*{Ties in the liver segmentation.} The liver segmentation of
+Section~\ref{sec:realdata}, used as given, is the one input on which the two
+meshes differ (the last row of Table~\ref{tab:headtohead}), because it
+contains the coincidences of
+Section~\ref{sec:degeneracy}. Ten of its $117\,649$ nodes carry an exact
+argmax tie, and eight more are tied up to rounding, with margins from
+$2.2\times10^{-16}$ to $1.8\times10^{-15}$, so an interface passes through
+each of these nodes. The reference evaluates its predicates exactly and
+places vertices on them. With the perturbation off, ours rejects the
+crossings at these nodes by the tolerance $\delta$ of
+Section~\ref{sec:predicates} and leaves holes there, $196$ unpaired sides in
+all. Its $34\,644$ vertices are those of the reference, to
+$1.5\times10^{-14}$\,mm, less the $63$ on these nodes. With the perturbation
+on at $10^{-9}$, the ties are broken, the mesh is closed, and patches, labels
+and the interfaces present agree with the reference. The vertex counts still
+differ, $34\,764$ against $34\,707$, because the displaced field is no longer
+degenerate. Where the reference has one vertex on an exactly tied node, ours
+has a cluster within $O(\varepsilon)$ of it, $67$ vertices in place of $10$
+at the ten nodes, which is the whole difference. Every vertex of either mesh
+lies within $1.7\times10^{-7}$\,mm of a vertex of the other. This distance is
+set by the perturbation, taking the values $1.7\times10^{-9}$,
+$1.7\times10^{-8}$ and $1.7\times10^{-7}$\,mm at $\varepsilon = 10^{-11}$,
+$10^{-10}$ and $10^{-9}$, the $O(\varepsilon)$ behavior of
+Section~\ref{sec:degentest-supp}. Displacing the data once,
+before either extractor reads it, restores exact agreement (the generic row
+of Table~\ref{tab:headtohead}).
+
+\paragraph*{Running time.} The reference arrangement, timed by its own stage
+timers, without input and output, takes $12$--$148$\,ms across these
+cases, and our extractor, from the node logits to the finished mesh,
+$97$\,ms--$1.1$\,s, between $1.2$ and $9.4$ times as long, our Python
+against their optimized C++ with a precomputed lookup table. These are
+wall-clock times on one machine and vary by tens of percent between runs.
+Neither implementation was tuned for the comparison.
+
+\section{Comparison with FlexiCubes}
+\label{sec:flexicubes-supp}
+
+This section gives the protocol and the full tables of the three
+comparisons of Section~\ref{sec:flexicubes}: extraction from a fixed field,
+optimization of the field, and three regions requested one at a time
+(one-versus-rest).
+Figure~\ref{fig:fcsetup} shows the inputs. FlexiCubes runs in float32, the
+precision of its default weight tensors, and our extractor in float64.
+
+\begin{figure}[htb]
+\centering
+\includegraphics[width=0.92\linewidth]{setup_flexicubes.png}
+\caption{Inputs of the three FlexiCubes experiments, drawn with our
+extractor. Top left and center: the analytic sphere of radius $0.62$ and torus, a
+tube of radius $0.24$ around a circle of radius $0.58$, of the extraction test (Table~\ref{tab:fcaccuracy}). Top right: the optimization
+starts from that sphere (gray) and fits $4096$ points drawn uniformly by area from
+an ellipsoid with semi-axes $0.78$, $0.52$ and $0.34$, or in a second run from
+the torus at the top center (Table~\ref{tab:fcopt}).
+Bottom left: the standard double bubble, two balls of radius $0.55$ whose
+centers are $0.55$ apart, with the front half
+cut away to show the flat wall between the lobes. Bottom center and right:
+FlexiCubes takes one scalar field, so each lobe is requested in its own run,
+as the zero set of $\max_{j\neq k} f_j - f_k$
+(Table~\ref{tab:fcjunction}).}
+\label{fig:fcsetup}
+\end{figure}
+
+\paragraph*{Extraction from a fixed field.} Table~\ref{tab:fcaccuracy} reports
+the same analytic field extracted with both methods, on matched grids with
+identical node and cell counts and identical sample locations, without
+optimization and with the FlexiCubes weights at their defaults, which is how
+the method would be used on a field that is already known. At its default
+weights the FlexiCubes extractor reduces to dual marching cubes, in which
+each dual vertex is the unweighted average of the crossings of its cell. Its authors
+credit the learned weights for the advantage of their method, but the
+weights are learned against a loss, and here there is none.
+
+The table reports distances from the extracted vertices and from points
+sampled by area. Scoring the extracted vertices
+measures little more than the interpolation error of our method, because our
+vertices are the zeros of the $P_1$ interpolant on tetrahedron edges,
+whereas a dual vertex is a weighted average of the crossings of its cell and
+need not lie on the surface even where the mesh is close to it. Points
+sampled uniformly by area treat both methods in the same way, and this is
+the measure quoted in Section~\ref{sec:flexicubes}. On it our method is more
+accurate in both statistics and in area at every resolution, by a factor of
+two to $2.2$ in the root mean square and $1.2$ to $1.7$ in the worst case,
+with about three times as many triangles. On the vertex measure our method
+has the lower root mean square, while the worst case is about equal on the
+sphere and lower for FlexiCubes on the torus, for the reason given above.
+Both methods converge at second order in area.
+
+\begin{table}[htbp]
+\centering
+\caption{Extraction accuracy at $K=2$ from a fixed field: relative area
+error, and distance to the analytic surface in grid cells, over points drawn
+uniformly by area ($d/h$) and over the extracted vertices ($d_v/h$). The
+sampled columns are the comparable ones; see the text.}
+\label{tab:fcaccuracy}
+\small
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+& res & triangles & area error & max $d/h$ & rms $d/h$ & max $d_v/h$ & rms $d_v/h$ \\
+\midrule
+\multicolumn{8}{@{}l}{\emph{sphere}} \\
+ours       & 16 & $2\,592$  & $1.05\!\times\!10^{-2}$ & $0.069$ & $0.036$ & $0.061$ & $0.021$ \\
+FlexiCubes & 16 & $828$     & $2.73\!\times\!10^{-2}$ & $0.120$ & $0.081$ & $0.070$ & $0.051$ \\
+ours       & 32 & $10\,968$ & $2.62\!\times\!10^{-3}$ & $0.036$ & $0.018$ & $0.034$ & $0.010$ \\
+FlexiCubes & 32 & $3\,660$  & $6.23\!\times\!10^{-3}$ & $0.060$ & $0.040$ & $0.035$ & $0.025$ \\
+ours       & 48 & $24\,912$ & $1.16\!\times\!10^{-3}$ & $0.025$ & $0.012$ & $0.025$ & $0.007$ \\
+FlexiCubes & 48 & $8\,364$  & $2.77\!\times\!10^{-3}$ & $0.043$ & $0.026$ & $0.025$ & $0.016$ \\
+ours       & 64 & $44\,304$ & $6.54\!\times\!10^{-4}$ & $0.019$ & $0.009$ & $0.019$ & $0.005$ \\
+FlexiCubes & 64 & $14\,748$ & $1.56\!\times\!10^{-3}$ & $0.032$ & $0.020$ & $0.018$ & $0.012$ \\
+\addlinespace
+\multicolumn{8}{@{}l}{\emph{torus}} \\
+ours       & 16 & $2\,864$  & $1.26\!\times\!10^{-2}$ & $0.173$ & $0.058$ & $0.170$ & $0.038$ \\
+FlexiCubes & 16 & $928$     & $4.42\!\times\!10^{-2}$ & $0.266$ & $0.125$ & $0.123$ & $0.074$ \\
+ours       & 32 & $12\,112$ & $3.11\!\times\!10^{-3}$ & $0.092$ & $0.027$ & $0.093$ & $0.018$ \\
+FlexiCubes & 32 & $3\,856$  & $1.02\!\times\!10^{-2}$ & $0.113$ & $0.056$ & $0.064$ & $0.035$ \\
+ours       & 48 & $27\,816$ & $1.38\!\times\!10^{-3}$ & $0.056$ & $0.018$ & $0.060$ & $0.012$ \\
+FlexiCubes & 48 & $8\,912$  & $4.49\!\times\!10^{-3}$ & $0.077$ & $0.037$ & $0.043$ & $0.023$ \\
+ours       & 64 & $49\,928$ & $7.76\!\times\!10^{-4}$ & $0.042$ & $0.013$ & $0.045$ & $0.009$ \\
+FlexiCubes & 64 & $16\,064$ & $2.46\!\times\!10^{-3}$ & $0.058$ & $0.027$ & $0.034$ & $0.017$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph*{Optimization.} One scalar grid of $33^3$ values, initialized to
+the signed distance of a sphere, drives both extractors under the same
+objective. At each step $2\,048$ points are drawn uniformly by area from the
+extracted mesh, and the objective is their symmetric Chamfer distance to a
+fixed target cloud of $4\,096$ points: the mean squared distance from each
+point to the nearest point of the other set, summed over both directions.
+The targets are an analytic ellipsoid, which
+is a pure deformation of the start, and an analytic torus, which additionally
+requires a change of genus, that is, a hole opened through the surface;
+accuracy is scored against the analytic surface
+rather than against the point cloud. Only the grid is optimized, so the two
+gradient paths are compared with the rest of each method fixed. FlexiCubes
+also carries per-cube weights, and freezing them would test only its
+gradient path, so a third run frees them and adds the regularizer that
+Shen et al.~\cite{shen2023} use with free weights, which penalizes the spread
+of the distances from each dual vertex to the crossings of its cell. Each run
+is swept over the learning rate and over the weight of a smoothness penalty,
+the mean squared seven-point discrete Laplacian of the grid values, and the
+setting with the lowest objective, averaged over the last $20$ of $250$
+steps, is reported, because the two methods respond differently to the same
+setting. Our trace oscillates at the largest learning rate while that of
+FlexiCubes is flat, and smoothing the grid helps our method more than it
+helps FlexiCubes.
+
+Our objective settles $29\%$ above those of the two FlexiCubes runs. On
+the true surface the difference is larger, and the FlexiCubes surface lies
+about six times closer to the ellipsoid than ours (Table~\ref{tab:fcopt}).
+Part of our error comes
+from small separate pieces of surface that appear away from the target
+during the descent; without them it is $0.17$ cells, still four times that
+of FlexiCubes. The remaining error is consistent with noise in the field,
+which our vertices reproduce and FlexiCubes damps by placing each vertex at
+an average of the crossings of its cell; at $K=2$ this is an advantage of
+FlexiCubes. Neither method achieves the change of genus that
+the torus requires from this initialization.
+
+The smoothness penalty isolates the difference, because it acts on
+the shared grid and is therefore the same change for both methods. At the
+selected learning rate of each method it reduces our error from
+$0.469$ to $0.274$ cells, while that of FlexiCubes moves only from $0.049$ to
+$0.043$. The penalty thus removes almost half of our excess error and little
+of that of FlexiCubes, but it does not close the gap. Stronger smoothing
+does not help further; at ten times the selected weight our error is $1.44$
+cells, worse than with no smoothing at all.
+
+\begin{table}[htbp]
+\centering
+\caption{Optimization at $K=2$ from a sphere, one grid through both
+extractors. The FlexiCubes row keeps its per-cube weights at their defaults;
+the weights-free row optimizes them as well, with the FlexiCubes regularizer on.
+Error is distance to the analytic target in grid cells; the
+objective is the Chamfer value being minimized. Each row is the best of ten
+settings of learning rate and field smoothness on the ellipsoid, six on the
+torus, selected on the objective and not on the error being reported.}
+\label{tab:fcopt}
+\small
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+& rms $d/h$ & max $d/h$ & triangles & objective \\
+\midrule
+\multicolumn{5}{@{}l}{\emph{ellipsoid, a pure deformation}} \\
+ours                  & $0.274$ & $3.59$ & $8\,784$ & $1.13\!\times\!10^{-3}$ \\
+FlexiCubes            & $0.043$ & $0.16$ & $2\,756$ & $8.80\!\times\!10^{-4}$ \\
+FlexiCubes, weights free & $0.046$ & $0.23$ & $2\,696$ & $8.77\!\times\!10^{-4}$ \\
+\addlinespace
+\multicolumn{5}{@{}l}{\emph{torus, additionally a genus change}} \\
+ours                  & $2.02$ & $9.44$ & $19\,656$ & $1.79\!\times\!10^{-2}$ \\
+FlexiCubes            & $1.55$ & $7.71$ & $6\,092$  & $1.26\!\times\!10^{-2}$ \\
+FlexiCubes, weights free & $1.82$ & $8.33$ & $6\,688$ & $1.50\!\times\!10^{-2}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Our runs reproduce bit for bit, as do the fixed-field and three-region
+comparisons for both methods, but they depend on the points drawn at each
+step. Over five seeds of that draw at the selected settings, our ellipsoid
+error ranges from $0.274$, the run in the table, to $1.86$ cells, and from
+$0.17$ to $0.72$ without the separate pieces; that of FlexiCubes stays between $0.042$
+and $0.045$ cells, and between $0.046$ and $0.047$ with free weights. The
+FlexiCubes optimization does not reproduce bit for bit, because its
+scatter-based assembly accumulates in float32 in an order that the GPU does
+not fix. Over repeated runs its ellipsoid error stays between $0.043$ and
+$0.045$ cells, but the worst case moves between $0.16$ and $0.46$ cells and
+the torus error between $1.55$ and $1.85$, partly because a different
+setting wins the sweep. The table quotes the released run log; no
+comparison here depends on differences of that size.
+
+\paragraph*{Three regions by one-versus-rest.} This test asks whether a
+single-field extractor can return a partition of three regions. The regions
+are those of the standard double bubble (Figure~\ref{fig:fcsetup}, bottom),
+whose true partition is known in closed form: the exterior and two equal
+lobes, which meet along a flat wall and a circular triple curve. A
+single-field extractor takes one region at a time,
+so each lobe $k$ is extracted on its own, as the zero set of
+$\max_{j\neq k} f_j - f_k$, which is negative inside the lobe and positive
+outside it; the exterior is what neither lobe claims. Our extractor is run
+once on all three labels and returns the three regions as
+one complex (rows ``ours, one complex'' of Table~\ref{tab:fcjunction}).
+Whether the two lobes
+and the exterior cover each point of the domain exactly once is measured on
+$40\,000$ points drawn uniformly from it, each found inside or outside each
+extracted surface by its generalized winding number~\cite{jacobson2013}, the
+solid angle that the surface subtends at the point divided by $4\pi$, which
+is $1$ inside a closed surface and $0$ outside; a point is inside when its
+absolute value exceeds one half. A point inside both lobes counts as overlap,
+a point of a true lobe inside neither counts as a gap, and a point whose
+label differs from the true one counts as an error, a point inside both
+lobes being given to the first.
+
+FlexiCubes does not return a partition at any resolution. From resolution $16$ to $48$ its overlap grows
+from $0.90\%$ to $1.41\%$ while its gap falls from $2.91\%$ to $1.87\%$, so
+refinement trades one against the other, and its error falls only from
+$3.90\%$ to $3.29\%$.
+
+The failure could come from asking for one region at a time or from the way
+FlexiCubes places its vertices. The field $\max_{j\neq k} f_j - f_k$ has a
+crease along the triple curve, where the maximum passes from one label to
+another, and FlexiCubes places each vertex at an average of the crossings of
+its cell, which rounds off a crease. A control separates the two. With our
+extractor in place of FlexiCubes, given the same two fields and scored in the
+same way (rows ``ours, one-versus-rest''), the overlap is zero at every
+resolution and the error falls from $0.67\%$ to $0.08\%$, close to that of
+our one-complex extraction. The one-versus-rest split therefore accounts for
+little of the error; most of the three percent comes from where FlexiCubes
+places its vertices near the crease.
+
+Our two one-versus-rest extractions cannot overlap, except within the $O(\varepsilon)$ distance by which
+the perturbation of Section~\ref{sec:degeneracy} moves each surface. Write $I(g)$ for the $P_1$ interpolant of a function $g$. Each extraction
+returns the exact zero set of the interpolant of its field, so lobe $k$
+claims the points where $I(f_k) > I(\max_{j\neq k} f_j)$. The interpolant
+combines node values with nonnegative weights, so
+$I(\max_{j\neq k} f_j) \ge I(f_j)$ for every $j \neq k$, and a point claimed
+by both lobes would need $I(f_1) > I(f_2)$ and $I(f_2) > I(f_1)$ at once. In
+cells where both lobes exceed the exterior at every node, the two fields
+interpolate to $\pm(I(f_1) - I(f_2))$, so both extractions put the wall in
+the same place; only near the triple curve, where interpolating the maximum
+and taking the maximum of the interpolants differ, do they leave a thin gap.
+A FlexiCubes vertex has no such property. Near the crease the two
+extractions average different crossings, and the overlap they leave does not
+shrink under refinement.
+
+Our one-complex extraction has the lowest error of the three at every
+resolution, falling from $0.51\%$ to $0.06\%$. It emits the shared wall once
+and contains the triple curve as an edge, which the contact operator of
+Section~\ref{sec:contact} requires.
+
+\begin{table}[htbp]
+\centering
+\caption{Three regions of the standard double bubble, extracted three ways:
+by our extractor run once on all three labels, which returns them as one
+complex; by our extractor run once per lobe on the one-versus-rest field of
+that lobe, the control; and by FlexiCubes run in the same way. The triangles
+of a one-versus-rest row are summed over its two runs. Overlap is the
+fraction of the domain both lobes claim, gap the fraction inside a true lobe
+that neither claims, and error the fraction whose label disagrees with the
+analytic partition, each over the same $40\,000$ uniform samples, so that
+every entry is a multiple of $0.0025\%$.}
+\label{tab:fcjunction}
+\small
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+res & method & triangles & overlap & gap & error \\
+\midrule
+16 & ours, one complex       & $4\,072$  & $0.00\%$ & $0.51\%$ & $0.51\%$ \\
+16 & ours, one-versus-rest       & $4\,260$  & $0.00\%$ & $0.67\%$ & $0.67\%$ \\
+16 & FlexiCubes, one-versus-rest & $1\,256$  & $0.90\%$ & $2.91\%$ & $3.90\%$ \\
+\addlinespace
+24 & ours, one complex       & $8\,910$  & $0.00\%$ & $0.21\%$ & $0.21\%$ \\
+24 & ours, one-versus-rest       & $9\,376$  & $0.00\%$ & $0.29\%$ & $0.29\%$ \\
+24 & FlexiCubes, one-versus-rest & $2\,776$  & $1.18\%$ & $2.23\%$ & $3.44\%$ \\
+\addlinespace
+32 & ours, one complex       & $15\,614$ & $0.00\%$ & $0.14\%$ & $0.14\%$ \\
+32 & ours, one-versus-rest       & $16\,912$ & $0.00\%$ & $0.19\%$ & $0.19\%$ \\
+32 & FlexiCubes, one-versus-rest & $4\,920$  & $1.27\%$ & $2.03\%$ & $3.31\%$ \\
+\addlinespace
+48 & ours, one complex       & $34\,886$ & $0.00\%$ & $0.06\%$ & $0.06\%$ \\
+48 & ours, one-versus-rest       & $38\,316$ & $0.00\%$ & $0.08\%$ & $0.08\%$ \\
+48 & FlexiCubes, one-versus-rest & $11\,288$ & $1.41\%$ & $1.87\%$ & $3.29\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Double-bubble ablation}
+\label{sec:ablation-supp}
+
+Section~\ref{sec:doublebubble} replaces our extractor by the corner-label
+extractor in the double-bubble optimization and attributes the failure to
+the case analysis. The baseline reads the features off the corner labels,
+locates them by bisection and Newton iteration instead of the closed-form
+solve of Section~\ref{sec:solve}, iterates on the field itself rather than
+on the $P_1$ interpolant, and has no perturbation. Any of these differences
+could change which features are emitted or make the objective trace noisy.
+
+Two more extractors, the second and third rows of Table~\ref{tab:ablation},
+separate these differences. Both read a cell as the case table does, with one
+crossing on each edge whose end labels differ, between those two labels, and
+one tie on each face or tetrahedron whose corner labels are all distinct,
+with no other label set tried and no dominance test. They then locate these
+features with our closed-form solves on the interpolant and assemble them as
+our method does, one with the perturbation and one without. Each is
+therefore our method with the enumeration replaced by the case table and
+no other change. On five-site power diagrams at three seeds, all three
+corner-label extractors emit the same vertex and triangle counts and differ
+only in where the vertices lie, because the baseline clamps its Newton
+iterate to an enlarged cell and the closed form does not.
+
+\begin{table}[htbp]
+\centering
+\caption{The double-bubble optimization under four extractors, at the settings
+of Section~\ref{sec:doublebubble} (resolution $32$, $300$ steps, identical
+objective, schedule, initialization and seed). The last row is the
+baseline, which reads features off the corner labels and locates them by
+Newton iteration; the two rows above it locate the same features with our
+closed-form solves, with and without the perturbation. $|\Delta^2|$ is the median
+absolute second difference of the trace of $A/\bar V^{2/3}$ over the second
+half of the run, and \emph{rev} is $|\Delta^2|$ over the median absolute first
+difference; only rev can be compared across rows, since a converged run has
+a flat trace.
+The exact value of $A/\bar V^{2/3}$ is $9.1394$ and the exact radius ratio
+is $1$. None of the corner-label meshes is watertight.}
+\label{tab:ablation}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+& $A/\bar V^{2/3}$ & $r_1/d$ & dihedral angles & rev & $|\Delta^2|$ \\
+\midrule
+ours                       & $9.1481$ & $1.0064$ & $119.8^\circ$--$120.3^\circ$ & $0.022$ & $3.5\!\times\!10^{-10}$ \\
+corner labels, closed form & $9.3424$ & $0.7646$ & $97.9^\circ$--$131.1^\circ$ & $0.018$ & $6.7\!\times\!10^{-6}$ \\
+corner labels, no perturbation & $9.1981$ & $0.9423$ & $115.6^\circ$--$122.2^\circ$ & $0.023$ & $3.9\!\times\!10^{-6}$ \\
+corner labels, Newton      & $9.1886$ & $1.2759$ & $113.1^\circ$--$133.9^\circ$ & $1.437$ & $1.0\!\times\!10^{-4}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The case analysis alone changes the outcome. With the solver, interpolant,
+objective, schedule and seed unchanged, and only the proposed features
+different, the ratio $r_1/d$ of the first radius to the distance between the
+centers moves from $1.0064$ to $0.7646$, the dihedral angles
+spread from $119.8^\circ$--$120.3^\circ$ to $97.9^\circ$--$131.1^\circ$, and
+the mesh is no longer watertight. Without the perturbation the ratio is
+$0.9423$, again not watertight. The failure is therefore caused neither by
+the baseline's solver nor by its lack of a perturbation.
+
+The noise in the objective trace has a different cause. With $a_t$ the value
+of $A/\bar V^{2/3}$ at step $t$, we score a trace by the median of
+$|a_{t+1} - 2a_t + a_{t-1}|$ over the median of $|a_{t+1} - a_t|$, both over
+the second half of the run, that is, by how much it reverses relative to how
+fast it moves; the second difference alone would measure convergence, since
+a converged trace is flat. On this measure our method scores
+$0.022$, the corner-label extractors $0.018$ with the perturbation and
+$0.023$ without, and the baseline $1.437$. The baseline is the one that
+reverses from step to step, so the noise in Figure~\ref{fig:doublebubble}
+comes from its iterative solver and the wrong shape from the case analysis.
+
+The three corner-label extractors do not err in the same direction: their
+ratios are $0.76$ and $0.94$, below the correct value, and $1.28$, above it.
+Their errors therefore do not measure one bias, and the gap cannot be split
+into a part due to the case analysis and a part due to the solver. A single
+start also says little about where the optimization can end. Over five
+starts (Table~\ref{tab:basins}), with $(r_1/d, r_2/d)$ equal to
+$(0.75, 0.57)$ as in Section~\ref{sec:doublebubble}, $(0.87, 0.87)$,
+$(0.78, 0.47)$, $(0.92, 0.96)$ and $(0.67, 0.64)$, the corner-label extractors end between
+$0.74$ and $1.03$, $0.70$ and $0.97$, and $0.90$ and $2.87$, and none of the
+fifteen runs is watertight. Our method returns $1.006$ to $1.009$ from four
+of the five starts and is watertight from all five. The value
+$r_1/d = 1.276$ is thus one sample from a wide range of end points away from
+the double bubble, as the refinement sweep of
+Section~\ref{sec:doublebubble} also finds by varying the grid.
+
+Our method fails from the most lopsided start, $(0.78, 0.47)$. It ends at
+$r_1/d = 0.4592$ with $A/\bar V^{2/3} = 9.6832$, the value $9.6720$ of two
+separate balls up to the discretization error. The lobes came apart, and
+with no shared wall there is no triple curve and no gradient to pull them
+back together. The output is still watertight and correctly represents a
+field whose lobes have separated, so this is a failure of the descent rather
+than of the extractor, but it is a dependence on initialization, and
+Section~\ref{sec:limitations} records it.
+
+\begin{table}[htbp]
+\centering
+\caption{The optimization of Table~\ref{tab:ablation} from five starts, with
+all other settings unchanged; spread is the width of the range. Our method
+recovers the double bubble from four of the five starts and is watertight
+from all five; from the most lopsided start the lobes separate into two
+balls. The corner-label extractors do not recover it, and none of their
+meshes is watertight.}
+\label{tab:basins}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+& $r_1/d$ range & spread & watertight \\
+\midrule
+ours                       & $0.4592$--$1.0091$ & $0.550$ & $5/5$ \\
+corner labels, closed form & $0.7443$--$1.0311$ & $0.287$ & $0/5$ \\
+corner labels, no perturbation & $0.7033$--$0.9679$ & $0.265$ & $0/5$ \\
+corner labels, Newton      & $0.9044$--$2.8705$ & $1.966$ & $0/5$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Contact between solid objects}
+\label{sec:contact-supp}
+
+Sections~\ref{sec:demos} and~\ref{sec:contact} summarize the accuracy of
+the contact set; this section gives the closed forms, the full table and the
+setup of the optimization. The field is that of Section~\ref{sec:demos},
+with $f_0 \equiv 0$ and $f_k(x) = r_k^2 - \lVert x - c_k\rVert^2$ for ball $k$.
+
+\paragraph*{Two balls.} Take two balls of radius $r$ with centers at
+$(\pm s/2, 0, 0)$. On the plane $x=0$ both ball logits equal
+$r^2 - s^2/4 - y^2 - z^2$, so the wall between them is a disk of radius
+$a=\sqrt{r^2-s^2/4}$, and
+\[
+  A(s) = \pi\!\left(r^2 - \tfrac{s^2}{4}\right),\quad
+  \frac{\mathrm{d}A}{\mathrm{d}s} = -\frac{\pi s}{2},\quad
+  C(s) = 2\pi\sqrt{r^2 - \tfrac{s^2}{4}},
+\]
+for $s<2r$, with all three zero beyond. Table~\ref{tab:contact} sweeps $s$
+across this range. The errors depend on $a/h$, the radius of the disk in
+grid cells, and not on the separation. Inside the disk the surface is exact,
+because $f_i-f_j$ is affine and so equals its own $P_1$ interpolant. All of
+the error is therefore in the position of the rim, and a disk only a few
+cells across places its rim coarsely. Automatic differentiation gives the
+derivative of the area with respect to the two centers, and the chain rule
+turns it into $\mathrm{d}A/\mathrm{d}s$. Agreement with the closed form
+tests the geometry. At $s=0.70$ automatic differentiation agrees with a
+central difference to a relative error of $1.8\times10^{-10}$ for the area
+and $1.3\times10^{-10}$ for the rim length.
+
+\paragraph*{Three balls.} Three balls of radius $r$ have their centers on a
+circle of radius $R$. The three ball logits are equal on the axis of that
+circle, since every point of the axis is equally far from the three centers.
+The background joins them where these logits are also zero, at distance $r$
+from each center, which gives two quadruple points at heights
+$\pm\sqrt{r^2-R^2}$ above and below the plane of the centers. The segment of
+the axis between them is the curve along which the three contact patches
+meet. With $r = 0.50$ and $R = 0.35$, the exact heights are $\pm0.357071$ and
+the exact length of the curve is $0.714143$. At resolution $48$ the extractor
+returns exactly two quadruple points, at $-0.355679$ and $+0.355835$, and a
+curve of length $0.711514$. The three patches have equal areas by symmetry,
+and the extracted areas differ by at most $8.5\times10^{-4}$ of the largest,
+although the grid shares none of that symmetry. Of the $39\,946$ triangles,
+$6\,236$ lie between two objects. Each of these is stored once and belongs
+to both objects, so there are no duplicate triangles to match up, as there
+would be with one mesh per object.
+
+\paragraph*{Optimization.} The optimization of Section~\ref{sec:contact}
+starts from this configuration at resolution $40$, where the three contact
+areas are equal by symmetry, about $0.380$. The targets are the contact areas
+of a second configuration, measured at the same resolution: radii $0.52$,
+$0.46$ and $0.55$, and centers on a circle of radius $0.33$, turned by
+$0.21$\,rad about its axis. They are $A^\star_{12} = 0.3242$,
+$A^\star_{13} = 0.5243$ and $A^\star_{23} = 0.3848$. Since the targets come
+from the same family of fields on the same grid, they can be reached; any
+remaining miss is the optimizer's. The parameters are the three centers
+and the three radii. Adam runs for $140$ steps at learning rate
+$8\times10^{-3}$, decayed by a cosine schedule to $5\%$ of that value, and
+the loss falls from $0.105$ to $6.8\times10^{-9}$.
+
+\begin{table}[htbp]
+\centering
+\caption{Two balls of radius $r=0.45$ moved apart, at resolution $48$
+(cell size $h=0.0417$), against the closed forms above. The separation is
+given as $s/2r$, which reaches $1$ when contact is lost, and $a/h$ is the
+exact disk radius in cells. The derivative is computed by automatic
+differentiation through the extraction. From $s = 2r$ on, the balls only
+touch or are apart, so the patch is empty and every entry is zero.}
+\label{tab:contact}
+\begin{tabular}{@{}rrrrrrrr@{}}
+\toprule
+& & \multicolumn{2}{c}{patch area $A$} & \multicolumn{2}{c}{$\mathrm{d}A/\mathrm{d}s$} & \multicolumn{2}{c}{rim length $C$} \\
+\cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(l){7-8}
+$s/2r$ & $a/h$ & value & rel.\ err & value & rel.\ err & value & rel.\ err \\
+\midrule
+$0.40$ & $9.9$ & $0.531388$ & $5.6\!\times\!10^{-3}$ & $-0.56266$ & $5.0\!\times\!10^{-3}$ & $2.58524$ & $2.4\!\times\!10^{-3}$ \\
+$0.60$ & $8.6$ & $0.404279$ & $7.1\!\times\!10^{-3}$ & $-0.84663$ & $1.9\!\times\!10^{-3}$ & $2.25530$ & $2.9\!\times\!10^{-3}$ \\
+$0.75$ & $7.1$ & $0.275223$ & $1.1\!\times\!10^{-2}$ & $-1.05793$ & $2.2\!\times\!10^{-3}$ & $1.86136$ & $4.7\!\times\!10^{-3}$ \\
+$0.85$ & $5.7$ & $0.173689$ & $1.6\!\times\!10^{-2}$ & $-1.19312$ & $7.1\!\times\!10^{-3}$ & $1.47955$ & $6.6\!\times\!10^{-3}$ \\
+$0.92$ & $4.2$ & $0.094584$ & $3.2\!\times\!10^{-2}$ & $-1.30194$ & $1.0\!\times\!10^{-3}$ & $1.09295$ & $1.4\!\times\!10^{-2}$ \\
+$0.96$ & $3.0$ & $0.046816$ & $6.1\!\times\!10^{-2}$ & $-1.31257$ & $3.3\!\times\!10^{-2}$ & $0.77149$ & $2.6\!\times\!10^{-2}$ \\
+$0.99$ & $1.5$ & $0.009581$ & $2.4\!\times\!10^{-1}$ & $-1.61520$ & $1.5\!\times\!10^{-1}$ & $0.35666$ & $1.1\!\times\!10^{-1}$ \\
+$1.00$ & $0$   & $0$        & ---                    & $0$        & ---                    & $0$       & --- \\
+$1.02$ & ---   & $0$        & ---                    & $0$        & ---                    & $0$       & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Clinical segmentation data}
+\label{sec:realdata-supp}
+
+Our vertices are computed from the $P_1$ interpolant of the probabilities,
+so their distance to its interface is rounding error and only confirms the
+computation. To compare the two methods,
+Section~\ref{sec:realdata} measures both against the trilinear interpolant
+of the same node values, which neither method uses. In each cube it blends
+the eight corner values with weights that are products of one linear weight
+per axis: at the point $(t_x,t_y,t_z)$ of a unit cube, the corner $(1,1,0)$
+has weight $t_x t_y (1-t_z)$. The $P_1$ interpolant blends only the four
+corners of the tetrahedron containing the point, with affine weights. The two
+agree at the nodes and along the cube edges, but the product terms curve the
+trilinear interface inside each cube, while ours is flat in each tetrahedron.
+The distance of a vertex is the gap between the two largest trilinear values
+there over the length of its gradient. On the walls between segments
+(Figure~\ref{fig:realdataacc}) the median
+distance is $0.0095$ voxels for our vertices and $0.090$ voxels for those of
+SurfaceNets, and the $90$th percentile is $0.074$ and $0.231$ voxels.
+
+Figure~\ref{fig:realdatajunction} shows the junction in the red box of
+Figure~\ref{fig:realdata}a. SurfaceNets labels
+each output polygon with the pair of segments it separates, as we label
+patches, so both panels use the colors of Figure~\ref{fig:realdata}b. In our
+output the three patches end on one shared vertex.
+SurfaceNets duplicates that vertex to keep the mesh manifold, and its
+smoothing pass pulls the copies $1.32$ voxels apart, the largest separation
+among the six groups of duplicated points in the window.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{realdata_accuracy.png}
+\caption{Distance of each vertex from the interface of the trilinear
+interpolant of the probabilities, which neither method uses, in the
+liver-segment window of Section~\ref{sec:realdata}. (a,~b) The walls between
+segments, seen as in Figure~\ref{fig:realdata}b, with the two large walls
+named as there; the outer surface of the liver is left out because it would
+hide them. Each face is colored by the mean distance of its corners, gray
+where they lie on the interface. Faces meeting the wall of the crop are
+dropped from the picture and the numbers, since a cut through a region is not
+an interface. (c) The share of vertices within a given distance. About a
+quarter of our vertices lie on grid edges parallel to an axis, where the two
+interpolants agree; they are drawn at the left edge. The two also agree where
+the field varies along one axis only, which is why our wall $5|6$, almost
+perpendicular to an axis, is grayer than the tilted wall $5|8$. The distance
+is a first-order estimate, which suffices to separate two meshes a tenth of
+a voxel apart.}
+\label{fig:realdataacc}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\linewidth]{realdata_liver_junction.png}
+\caption{The junction in the red box of Figure~\ref{fig:realdata}a, with the
+same camera and box in both panels and the colors of
+Figure~\ref{fig:realdata}b; the letters continue that figure. (c) Ours: the
+three patches end on one shared vertex, so their separation is zero by
+construction. (d) \texttt{vtkSurfaceNets3D}: the vertex is duplicated to keep
+the mesh manifold, and smoothing pulls the copies $1.32$ voxels apart.}
+\label{fig:realdatajunction}
+\end{figure}
+
+\bibliographystyle{eg-alpha-doi}
+\bibliography{refs}
+
+\end{document}

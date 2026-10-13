@@ -1,0 +1,62 @@
+[
+ {
+  "seed": 0,
+  "lr": 0.01,
+  "reg": 0.1,
+  "rms_dist_cells": 0.27443472313607525,
+  "max_dist_cells": 3.5879120452018363,
+  "rms_main_cells": 0.1707766652299246,
+  "max_main_cells": 1.9881643121391401,
+  "pieces": 3,
+  "triangles": 8784,
+  "piece_triangles": 60
+ },
+ {
+  "seed": 1,
+  "lr": 0.01,
+  "reg": 0.1,
+  "rms_dist_cells": 1.8580845538761273,
+  "max_dist_cells": 10.610829180791923,
+  "rms_main_cells": 0.7235331426671365,
+  "max_main_cells": 3.9346058051641783,
+  "pieces": 4,
+  "triangles": 9894,
+  "piece_triangles": 378
+ },
+ {
+  "seed": 2,
+  "lr": 0.01,
+  "reg": 0.1,
+  "rms_dist_cells": 1.2155503218388686,
+  "max_dist_cells": 10.588030825754622,
+  "rms_main_cells": 0.5439256903328505,
+  "max_main_cells": 4.114434784717109,
+  "pieces": 4,
+  "triangles": 9032,
+  "piece_triangles": 112
+ },
+ {
+  "seed": 3,
+  "lr": 0.01,
+  "reg": 0.1,
+  "rms_dist_cells": 0.556924479599943,
+  "max_dist_cells": 4.062108370303518,
+  "rms_main_cells": 0.3444546877380321,
+  "max_main_cells": 3.548563163408877,
+  "pieces": 2,
+  "triangles": 8972,
+  "piece_triangles": 148
+ },
+ {
+  "seed": 4,
+  "lr": 0.01,
+  "reg": 0.1,
+  "rms_dist_cells": 0.30744941799600745,
+  "max_dist_cells": 3.5878299832856984,
+  "rms_main_cells": 0.3066756279272838,
+  "max_main_cells": 3.6394934621826653,
+  "pieces": 1,
+  "triangles": 8784,
+  "piece_triangles": 24
+ }
+]

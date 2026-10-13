@@ -1,0 +1,33 @@
+1. clinical field as given, against the reference
+   10 nodes with an exact argmax tie, at values 0.456-0.500
+   8 more with 0 < margin < 1e-12: margins 2.2e-16 to 1.8e-15
+   reference: 34707 vertices; tied node to nearest reference vertex 0.0e+00 mm, near-tied node 1.8e-15 mm
+   eps 0e+00: ours 34644 vertices, closed False (196 unpaired sides)
+      every reference vertex within 9.86e-01 mm of one of ours, every one of ours within 1.48e-14 mm of the reference
+      63 reference vertices with none of ours within 1e-9 mm; 63 of them on a tied or near-tied node
+   eps 1e-11: ours 34764 vertices, closed True (0 unpaired sides)
+      every reference vertex within 1.69e-09 mm of one of ours, every one of ours within 1.69e-09 mm of the reference
+      vertices within 1e-6 grid steps of an exactly tied node: ours 67, reference 10
+   eps 1e-10: ours 34764 vertices, closed True (0 unpaired sides)
+      every reference vertex within 1.69e-08 mm of one of ours, every one of ours within 1.69e-08 mm of the reference
+      vertices within 1e-6 grid steps of an exactly tied node: ours 67, reference 10
+   eps 1e-09: ours 34764 vertices, closed True (0 unpaired sides)
+      every reference vertex within 1.69e-07 mm of one of ours, every one of ours within 1.69e-07 mm of the reference
+      vertices within 1e-6 grid steps of an exactly tied node: ours 67, reference 10
+2. lower bound on eps, tolerance delta = 1e-12
+   clinical field
+      eps 1e-11: 0 of 10 ties separated by less than delta; closed True (0 unpaired sides)
+      eps 1e-10: 0 of 10 ties separated by less than delta; closed True (0 unpaired sides)
+      eps 1e-09: 0 of 10 ties separated by less than delta; closed True (0 unpaired sides)
+      eps 1e-11 with delta lowered to 1e-13: closed True (0 unpaired sides)
+   two labels f1 = x1, f2 = 0 at resolution 48, tied on the plane x1 = 0
+      eps 1e-11: 0 of 2401 ties separated by less than delta; closed True (0 unpaired sides)
+      eps 1e-10: 0 of 2401 ties separated by less than delta; closed True (0 unpaired sides)
+      eps 1e-09: 0 of 2401 ties separated by less than delta; closed True (0 unpaired sides)
+      eps 1e-08: 0 of 2401 ties separated by less than delta; closed True (0 unpaired sides)
+      eps 1e-07: 0 of 2401 ties separated by less than delta; closed True (0 unpaired sides)
+3. three labels f1 = x1, f2 = 0, f3 = x2 at resolutions 36-60 (even), two tied on the planes x1 = 0 and x2 = 0, all three on the line x1 = x2 = 0
+      eps 1e-11: 13 of 13 meshes open, 585 unpaired sides, all within 0.98 grid steps of the line (637 nodes with a three-way tie in all)
+      eps 1e-10: 10 of 13 meshes open, 92 unpaired sides, all within 0.69 grid steps of the line (637 nodes with a three-way tie in all)
+      eps 1e-09: 2 of 13 meshes open, 12 unpaired sides, all within 0.33 grid steps of the line (637 nodes with a three-way tie in all)
+      eps 1e-08: 1 of 13 meshes open, 2 unpaired sides, all within 0.00 grid steps of the line (637 nodes with a three-way tie in all)
